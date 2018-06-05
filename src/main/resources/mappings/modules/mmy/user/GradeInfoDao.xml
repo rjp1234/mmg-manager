@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.mmy.user.dao.GradeInfoDao">
+    <select id="getAll" resultType="GradeInfo">
+		SELECT 
+			*
+		FROM grade_info
+	</select>
+	
+	<select id="findList" resultType="GradeInfo">
+		SELECT 
+			*
+		FROM grade_info
+		<where>
+		del_flag=#{DEL_FLAG_NORMAL}
+				<if test="name!=null and name!=''">
+				and NAME=#{name} 				
+				</if>		
+		</where>
+		ORDER BY name DESC
+	</select>
+	<insert id="insert">
+	INSERT INTO grade_info (id,name,creater,create_time,del_flag) values (#{id},#{name},#{creater},#{createTime},#{DEL_FLAG_NORMAL})
+	</insert>
+	<select id="countByName" resultType="int">
+		select count(1) from grade_info where name=#{name} and del_flag=#{DEL_FLAG_NORMAL}
+	</select>
+	<update id="delById">
+		UPDATE grade_info SET del_flag=#{DEL_FLAG_DELETE}  WHERE id=#{id} 
+	</update>
+</mapper>
