@@ -38,7 +38,7 @@ public class UserInfoController extends BaseController {
      */
     @RequestMapping("userBatchForm")
     public String userBatchForm(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return returnPrefix + "user/userBatchForm";
+        return "user/userBatchForm";
 
     }
 
@@ -50,7 +50,7 @@ public class UserInfoController extends BaseController {
      */
     @RequestMapping("userForm")
     public String userForm(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return returnPrefix + "user/userBatchForm";
+        return "user/userBatchForm";
     }
 
     /**
@@ -60,7 +60,7 @@ public class UserInfoController extends BaseController {
      */
     @RequestMapping("userList")
     public String userList(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return returnPrefix + "user/userList";
+        return "user/userList";
     }
 
 }

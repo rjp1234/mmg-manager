@@ -10,6 +10,8 @@
 package com.thinkgem.jeesite.modules.mmy.user.service;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
 public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
     @Autowired
     GradeInfoDao gradeDao;
+
+    private static Lock lock = new ReentrantLock();
 
     /**
      * 
@@ -65,13 +69,22 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
      */
     @Transactional(readOnly = false)
     public int insertGrade(GradeInfo gradeInfo) {
-        int i = countByName(gradeInfo);
-        if (i != 0) {
-            return -1;
+        lock.lock();
+        int i = 0;
+        try {
+            i = countByName(gradeInfo);
+            if (i != 0) {
+                return -1;
+            }
+            gradeInfo.setId(IdGen.uuid());
+            gradeInfo.setCreateTime(TimeUtils.formateNowDay2());
+            gradeDao.insert(gradeInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            lock.unlock();
         }
-        gradeInfo.setId(IdGen.uuid());
-        gradeInfo.setCreateTime(TimeUtils.formateNowDay2());
-        return gradeDao.insert(gradeInfo);
+        return i;
     }
 
     /**
@@ -90,16 +103,31 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
      * @return -1、已存在同名的组别，无法插入 0、插入失败 1 成功插入
      */
     @Transactional(readOnly = false)
-    public int updateGradeName(GradeInfo gradeInfo) {
-        int i = countByName(gradeInfo);
-        if (i != 0) {
-            return -1;
+    public synchronized int updateGradeName(String name, String id) {
+        lock.lock();
+        int i = 0;
+        try {
+            GradeInfo gradeInfo = new GradeInfo();
+            gradeInfo.setId(id);
+            gradeInfo.setName(name);
+            i = countByName(gradeInfo);
+            if (i != 0) {
+                return -1;
+            }
+            gradeDao.updateName(gradeInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            lock.unlock();
         }
-        return gradeDao.update(gradeInfo);
+
+        return i;
     }
 
     @Transactional(readOnly = false)
-    public int delById(GradeInfo gradeInfo) {
+    public int delById(String id) {
+        GradeInfo gradeInfo = new GradeInfo();
+        gradeInfo.setId(id);
         return gradeDao.delById(gradeInfo);
     }
 

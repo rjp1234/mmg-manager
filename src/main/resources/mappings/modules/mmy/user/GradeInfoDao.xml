@@ -17,7 +17,7 @@
 				and NAME=#{name} 				
 				</if>		
 		</where>
-		ORDER BY name DESC
+		ORDER BY create_time
 	</select>
 	<insert id="insert">
 	INSERT INTO grade_info (id,name,creater,create_time,del_flag) values (#{id},#{name},#{creater},#{createTime},#{DEL_FLAG_NORMAL})
@@ -27,5 +27,11 @@
 	</select>
 	<update id="delById">
 		UPDATE grade_info SET del_flag=#{DEL_FLAG_DELETE}  WHERE id=#{id} 
+	</update>
+	<select id="get" resultType="GradeInfo">
+		select * from grade_info where id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
+	</select>
+	<update id="updateName">
+		UPDATE grade_info SET name=#{name} where id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
 	</update>
 </mapper>

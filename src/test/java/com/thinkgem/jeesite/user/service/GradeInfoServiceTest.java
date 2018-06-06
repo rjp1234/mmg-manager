@@ -71,7 +71,7 @@ public class GradeInfoServiceTest extends BaseTest {
     public void delTest() {
         List<GradeInfo> list = gradeInfoService.getAll();
         for (GradeInfo gradeInfo : list) {
-            gradeInfoService.delById(gradeInfo);
+            gradeInfoService.delById(gradeInfo.getId());
         }
     }
 
