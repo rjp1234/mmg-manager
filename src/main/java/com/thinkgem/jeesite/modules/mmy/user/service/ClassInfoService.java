@@ -23,6 +23,7 @@ import com.thinkgem.jeesite.common.utils.TimeUtils;
 import com.thinkgem.jeesite.modules.mmy.user.dao.ClassInfoDao;
 import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
 import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * 
@@ -83,7 +84,7 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
             classInfo.setGradeId(grade.getId());
             classInfo.setName(classname);
             classInfo.setCreateTime(TimeUtils.formateNowDay2());
-            classInfo.setCreater("1");
+            classInfo.setCreater(UserUtils.getUser().getId());
             i = countByClassName(classname);
             if (i > 0) {
                 return -1;
