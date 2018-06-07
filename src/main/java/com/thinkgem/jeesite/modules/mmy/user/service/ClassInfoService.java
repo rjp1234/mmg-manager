@@ -9,6 +9,7 @@
  */
 package com.thinkgem.jeesite.modules.mmy.user.service;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -68,6 +69,17 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
 
     /**
      * 
+     * getListByGrade(根据组名获取对应班级)
+     * 
+     */
+    public List<ClassInfo> getListByGrade(String gradeId) {
+        ClassInfo classInfo = new ClassInfo();
+        classInfo.setGradeId(gradeId);
+        return classDao.getByGradeId(classInfo);
+    }
+
+    /**
+     * 
      * createClass(调用本方法前前必须确认组名grade是否存在)
      * 
      * * （需同步）
@@ -83,7 +95,7 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
             classInfo.setGradeId(grade.getId());
             classInfo.setName(classname);
             classInfo.setCreateTime(TimeUtils.formateNowDay2());
-            classInfo.setCreater(UserUtils.getUser().getId() == null ? "1" : UserUtils.getUser().getId());
+            classInfo.setCreater(UserUtils.getUser().getId());
             i = countByClassName(classname);
             if (i > 0) {
                 return -1;
@@ -134,6 +146,21 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
         ClassInfo classInfo = new ClassInfo();
         classInfo.setName(className);
         return classDao.countByClassName(classInfo);
+    }
+
+    /**
+     * 
+     * updateGradeId(更新班级对应的组，并发时可能导致sql语句报错)
+     * 
+     * 
+     */
+    @Transactional(readOnly = false)
+    public int updateGradeId(GradeInfo grade, String classId) throws Exception {
+        ClassInfo classInfo = new ClassInfo();
+        classInfo.setGradeId(grade.getId());
+        classInfo.setId(classId);
+        return classDao.updateGradeId(classInfo);
+
     }
 
     /**

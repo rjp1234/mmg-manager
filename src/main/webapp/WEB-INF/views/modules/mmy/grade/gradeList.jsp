@@ -121,7 +121,7 @@ function doubleCheck(msg){
 			href="${ctx}/operate/gatheringPlace/noteShowList"></a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="gradeInfo"
-		action="${ctx}/operator/grade" method="post"
+		action="${ctx}/operator/grade/gradeList" method="post"
 		class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 		<input id="pageSize" name="pageSize" type="hidden"

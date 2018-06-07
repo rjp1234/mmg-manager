@@ -30,6 +30,13 @@
 			<maxSize>5M</maxSize>
 			<allowedExtensions>7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip</allowedExtensions>
 			<deniedExtensions></deniedExtensions>
+		</type>excel
+			<type name="excel">
+			<url>%BASE_URL%files/</url>
+			<directory>%BASE_DIR%files</directory>
+			<maxSize>5M</maxSize>
+			<allowedExtensions>xls,xlsx</allowedExtensions>
+			<deniedExtensions></deniedExtensions>
 		</type>
 		<type name="images">
 			<url>%BASE_URL%images/</url>
@@ -51,14 +58,14 @@
 			<role>*</role>
 			<resourceType>*</resourceType>
 			<folder>/</folder>
-			<folderView>false</folderView>
-			<folderCreate>false</folderCreate>
-			<folderRename>false</folderRename>
-			<folderDelete>false</folderDelete>
-			<fileView>false</fileView>
-			<fileUpload>false</fileUpload>
-			<fileRename>false</fileRename>
-			<fileDelete>false</fileDelete>
+			<folderView>true</folderView>
+			<folderCreate>true</folderCreate>
+			<folderRename>true</folderRename>
+			<folderDelete>true</folderDelete>
+			<fileView>true</fileView>
+			<fileUpload>true</fileUpload>
+			<fileRename>true</fileRename>
+			<fileDelete>true</fileDelete>
 		</accessControl>
 	</accessControls>
 	<thumbs>

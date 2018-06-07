@@ -37,10 +37,20 @@ public class UserInfo extends DataEntity<UserInfo> {
 
     private String createTime;// 用户创建时间
 
+    private String classId;// 所属班级
+
     public static final int USER_TYPE_LOCAL_STUDENT = 0;// 用户类型为本地学生
 
     public String getLoginname() {
         return loginname;
+    }
+
+    public String getClassId() {
+        return classId;
+    }
+
+    public void setClassId(String classId) {
+        this.classId = classId;
     }
 
     public void setLoginname(String loginname) {

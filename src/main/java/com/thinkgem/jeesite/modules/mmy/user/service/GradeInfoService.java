@@ -9,7 +9,9 @@
  */
 package com.thinkgem.jeesite.modules.mmy.user.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thinkgem.jeesite.common.ThreadPool;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.service.CrudService;
 import com.thinkgem.jeesite.common.utils.IdGen;
@@ -141,6 +144,43 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
         GradeInfo grade = new GradeInfo();
         grade.setId(gradeId);
         return gradeDao.get(grade);
+    }
+
+    private static final Map<String, GradeInfo> bufferGradeMap = new HashMap<String, GradeInfo>();
+
+    private static long timeStamp = System.currentTimeMillis();// 时间除非主动更改，不会随系统时间变化而变
+
+    /**
+     * 
+     * getByIdBuffer(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    public GradeInfo getByIdBuffer(String gradeId) {
+        GradeInfo grade = bufferGradeMap.get(gradeId);
+        if (grade == null) {
+            grade = getById(gradeId);
+            bufferGradeMap.put(gradeId, grade);
+        } else {
+            // 使用map中的数据，但抛出线程去更新其中的数据,线程之间时间间隔1000ms
+            // 以避免请求低命中率
+            ThreadPool.getInstance().execute(() -> {
+                long difTime = System.currentTimeMillis() - timeStamp;
+                if (difTime > 2000) {
+                    System.err.println("grade 信息已经刷新");
+                    timeStamp = System.currentTimeMillis();
+                    bufferGradeMap.put(gradeId, getById(gradeId));
+                } else {
+                    System.err.println("grade 信息不刷新");
+                }
+            });
+
+        }
+        return grade;
+
+    }
+
+    public static void main(String[] args) throws InterruptedException {
     }
 
 }

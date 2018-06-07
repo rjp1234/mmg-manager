@@ -9,6 +9,7 @@
  */
 package com.thinkgem.jeesite.modules.mmy.user.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
 import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
 import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * 
@@ -62,14 +64,39 @@ public class ClassInfoController extends BaseController {
 
     /**
      * 
+     * getByGradeId(根据组名获取旗下班级)
+     */
+    @RequestMapping("getByGradeId")
+    @ResponseBody
+    public Map<String, Object> getByGradeId(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        String gradeId = request.getParameter("gradeId");
+        returnMap.put("flag", false);
+        try {
+            List<ClassInfo> listByGrade = classService.getListByGrade(gradeId);
+            returnMap.put("data", listByGrade);
+            returnMap.put("flag", true);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return returnMap;
+
+    }
+
+    /**
+     * 
      * classForm(跳转至班级页面)
      * 
      */
 
     @RequestMapping("classForm")
     public String classForm(HttpServletRequest request, HttpServletResponse response, Model model) {
+        String id = request.getParameter("id");
         List<GradeInfo> all = gradeService.getAll();
         model.addAttribute("gradeList", all);
+        if (StringUtils.isNotBlank(id)) {
+            return "modules/mmy/class/classModifyForm";
+        }
         return "modules/mmy/class/classForm";
     }
 
@@ -88,6 +115,10 @@ public class ClassInfoController extends BaseController {
             addMessage(redirectAttributes, "组别不存在");
             return "redirect:" + adminPath + "/operator/class/classForm";
         }
+        if (StringUtils.isBlank(classInfo.getName())) {
+            addMessage(redirectAttributes, "班级名不得为空");
+            return "redirect:" + adminPath + "/operator/class/classForm";
+        }
         int i = classService.createClass(gradeInfo, classInfo.getName());
         if (i == 1) {
             addMessage(redirectAttributes, "班级名" + classInfo.getName() + "创建成功");
@@ -95,16 +126,75 @@ public class ClassInfoController extends BaseController {
             addMessage(redirectAttributes, "班级名" + classInfo.getName() + "创建失败");
             return "redirect:" + adminPath + "/operator/class/classForm";
         }
-        return adminPath;
+        return "redirect:" + adminPath + "/operator/class/classList";
     }
 
+    @RequestMapping("modifyClass")
+    public String modifyClassName(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
+            Model model, RedirectAttributes redirectAttributes) {
+        ClassInfo cl = classService.getById(classInfo.getId());
+        String className1 = classInfo.getName();// 将要改变的
+        String className2 = cl.getName();// 改变之前的
+        if (StringUtils.isNotBlank(className1) && (!className1.equals(className2))) {
+            // 需要更新名称
+            // 更新的名称不能在班级列表中出现
+            int i = classService.updateClassName(cl.getId(), className1);
+            if (i < 0) {
+                addMessage(redirectAttributes, "班级名称重名");
+                return "redirect:" + adminPath + "/operator/class/classForm?id=" + cl.getId();
+            }
+        }
+        /**
+         * 更新组名
+         */
+        GradeInfo grade = gradeService.getById(classInfo.getGradeId());
+        try {
+            classService.updateGradeId(grade, classInfo.getId());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            addMessage(redirectAttributes, "组名更新失败");
+            return "redirect:" + adminPath + "/operator/class/classForm?id=" + cl.getId();
+        }
+
+        return "redirect:" + adminPath + "/operator/class/classList";
+
+    }
+
+    /**
+     * 
+     * classList(班级列表)
+     * 
+     * 
+     */
     @RequestMapping("classList")
     public String classList(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
             Model model) {
         Page<ClassInfo> page = new Page<ClassInfo>(request, response);
         page = classService.findPage(page, classInfo);
+        List<ClassInfo> classList = page.getList();
+        for (ClassInfo cl : classList) {
+            // 数据库存储的creater是创建人的id，这里要将他转换成创建人名
+            String createId = cl.getCreater();
+            String createName = UserUtils.get(createId).getLoginName();
+            cl.setCreater(createName);
+            // 数据库存储的gradeId，这里将他换成gradeName
+            String gradeId = cl.getGradeId();
+            GradeInfo grade = gradeService.getByIdBuffer(gradeId);
+            if (grade != null) {
+                cl.setGradeId(grade.getName());
+            } else {
+                cl.setGradeId("<span style='color:red'>该班级未和正确的组关联，请点击编辑进行设置</span>");
+            }
+        }
+        List<GradeInfo> gradeList = new ArrayList<GradeInfo>();
+        try {
+            gradeList = gradeService.getAll();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        model.addAttribute("gradeList", gradeList);
         model.addAttribute("page", page);
-        return adminPath;
+        return "modules/mmy/class/classList";
 
     }
 
@@ -125,6 +215,21 @@ public class ClassInfoController extends BaseController {
             returnMap.put("msg", "<span style='color:green'>该名称可以使用</span>");
         }
         return returnMap;
+
+    }
+
+    @RequestMapping("delClassById")
+    public String delClassById(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
+            Model model, RedirectAttributes redirectAttributes) {
+
+        int i = classService.delById(classInfo.getId());
+        if (i == 1) {
+            addMessage(redirectAttributes, "删除成功");
+        } else {
+            addMessage(redirectAttributes, "删除失败");
+        }
+
+        return "redirect:" + adminPath + "/operator/class/classList";
 
     }
 

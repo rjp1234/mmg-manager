@@ -51,10 +51,18 @@ public interface ClassInfoDao extends CrudDao<ClassInfo> {
 
     /**
      * 
-     * delById(这里用一句话描述这个方法的作用)
+     * delById(根据id删除)
      * 
      * 
      */
     public int delById(ClassInfo classInfo);
+
+    /**
+     * 
+     * updateGradeId(更新组)
+     * 
+     * 
+     */
+    public int updateGradeId(ClassInfo classInfo);
 
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.mmy.user.dao.UserInfoDao">
+	<select id="get" resultType="UserInfo">
+		SELECT * FROM user where id=#{id}
+		and del_flag=#{delFlag}
+	</select>
+	<select id="findList" resultType="UserInfo">
+		select * from user
+		<where>
+			del_flag=#{delFlag}
+			<if test="phonenum !=null and phonenum!=''">
+				and phonenum=#{phonenum}
+			</if>
+			<if test="loginname !=null and loginname!=''">
+				and loginname like concat('%',#{loginname},'%')
+			</if>
+			<if test="nickname !=null and nickname!=''">
+				and nickname like concat('%' ，#{nickname},'%')
+			</if>
+			<if test="classId!='' and classId!=null">
+				and class_id = #{classId}
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+</mapper>
