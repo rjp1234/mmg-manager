@@ -9,7 +9,9 @@
  */
 package com.thinkgem.jeesite.modules.mmy.user.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,9 +23,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.config.Global;
+import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
 import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
@@ -77,9 +81,51 @@ public class ClassInfoController extends BaseController {
     @RequestMapping("createClass")
     public String createClass(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
             RedirectAttributes redirectAttributes) {
-        System.out.println(classInfo.getGradeId());
-        System.out.println(classInfo.getName());
+        String gradeId = classInfo.getGradeId();
+        // 组别校验
+        GradeInfo gradeInfo = gradeService.getById(gradeId);
+        if (gradeInfo == null) {
+            addMessage(redirectAttributes, "组别不存在");
+            return "redirect:" + adminPath + "/operator/class/classForm";
+        }
+        int i = classService.createClass(gradeInfo, classInfo.getName());
+        if (i == 1) {
+            addMessage(redirectAttributes, "班级名" + classInfo.getName() + "创建成功");
+        } else {
+            addMessage(redirectAttributes, "班级名" + classInfo.getName() + "创建失败");
+            return "redirect:" + adminPath + "/operator/class/classForm";
+        }
         return adminPath;
+    }
+
+    @RequestMapping("classList")
+    public String classList(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
+            Model model) {
+        Page<ClassInfo> page = new Page<ClassInfo>(request, response);
+        page = classService.findPage(page, classInfo);
+        model.addAttribute("page", page);
+        return adminPath;
+
+    }
+
+    /**
+     * 
+     * checkClassName(ajax确认班级名称是否合法)
+     */
+    @RequestMapping("checkClassName")
+    @ResponseBody
+    public Map<String, Object> checkClassName(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        returnMap.put("flag", false);
+        returnMap.put("msg", "<span style='color:red'>该名称已存在</span>");
+        String className = request.getParameter("name");
+        int i = classService.countByClassName(className);
+        if (i == 0) {
+            returnMap.put("flag", true);
+            returnMap.put("msg", "<span style='color:green'>该名称可以使用</span>");
+        }
+        return returnMap;
+
     }
 
     public static void main(String[] args) {

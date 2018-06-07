@@ -4,7 +4,7 @@
     <select id="getAll" resultType="GradeInfo">
 		SELECT 
 			*
-		FROM grade_info
+		FROM grade_info where del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	
 	<select id="findList" resultType="GradeInfo">

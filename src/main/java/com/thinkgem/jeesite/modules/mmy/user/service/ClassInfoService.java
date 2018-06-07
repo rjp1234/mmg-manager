@@ -34,7 +34,6 @@ import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
  * 
  */
 @Service
-
 public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
     @Autowired
     ClassInfoDao classDao;

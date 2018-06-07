@@ -57,7 +57,7 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
      * 
      */
     public List<GradeInfo> getAll() {
-        return gradeDao.getAll();
+        return gradeDao.getAll(new GradeInfo());
     }
 
     /**
@@ -78,7 +78,7 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
             }
             gradeInfo.setId(IdGen.uuid());
             gradeInfo.setCreateTime(TimeUtils.formateNowDay2());
-            gradeDao.insert(gradeInfo);
+            i = gradeDao.insert(gradeInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
@@ -114,7 +114,7 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
             if (i != 0) {
                 return -1;
             }
-            gradeDao.updateName(gradeInfo);
+            i = gradeDao.updateName(gradeInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
@@ -129,6 +129,18 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
         GradeInfo gradeInfo = new GradeInfo();
         gradeInfo.setId(id);
         return gradeDao.delById(gradeInfo);
+    }
+
+    /**
+     * 
+     * getById(根据id获取组别)
+     * 
+     * 
+     */
+    public GradeInfo getById(String gradeId) {
+        GradeInfo grade = new GradeInfo();
+        grade.setId(gradeId);
+        return gradeDao.get(grade);
     }
 
 }

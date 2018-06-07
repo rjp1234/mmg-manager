@@ -32,7 +32,7 @@ public interface GradeInfoDao extends CrudDao<GradeInfo> {
      * 
      * 
      */
-    public List<GradeInfo> getAll();
+    public List<GradeInfo> getAll(GradeInfo gradeInfo);
 
     /**
      * countByName(查询名称对应的组别是否已经存在)
