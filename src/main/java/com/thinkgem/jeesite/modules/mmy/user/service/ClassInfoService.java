@@ -176,4 +176,15 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
         return classDao.delById(classInfo);
     }
 
+    /**
+     * 
+     * getAll(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    public List<ClassInfo> getAll() {
+        // TODO Auto-generated method stub
+        return classDao.getAll();
+    }
+
 }

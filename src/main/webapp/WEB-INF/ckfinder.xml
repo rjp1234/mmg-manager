@@ -58,14 +58,14 @@
 			<role>*</role>
 			<resourceType>*</resourceType>
 			<folder>/</folder>
-			<folderView>true</folderView>
-			<folderCreate>true</folderCreate>
-			<folderRename>true</folderRename>
-			<folderDelete>true</folderDelete>
-			<fileView>true</fileView>
-			<fileUpload>true</fileUpload>
-			<fileRename>true</fileRename>
-			<fileDelete>true</fileDelete>
+			<folderView>false</folderView>
+			<folderCreate>false</folderCreate>
+			<folderRename>false</folderRename>
+			<folderDelete>false</folderDelete>
+			<fileView>false</fileView>
+			<fileUpload>false</fileUpload>
+			<fileRename>false</fileRename>
+			<fileDelete>false</fileDelete>
 		</accessControl>
 	</accessControls>
 	<thumbs>

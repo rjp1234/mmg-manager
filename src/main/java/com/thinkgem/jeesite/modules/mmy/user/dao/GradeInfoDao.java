@@ -53,4 +53,12 @@ public interface GradeInfoDao extends CrudDao<GradeInfo> {
      */
     public int updateName(GradeInfo gradeInfo);
 
+    /**
+     * 
+     * getByClassId(根据班级名称去查询对应的组)
+     * 
+     * 
+     */
+    public GradeInfo getByClassId(String classId);
+
 }

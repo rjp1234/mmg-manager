@@ -53,5 +53,8 @@
 		update class_info set grade_id=(select id from grade_info where id=#{gradeId} and del_flag=#{delFlag})
 		where id=#{id} and del_flag=#{delFlag}
 	</update>
+	<select id="getAll" resultType="ClassInfo">
+		select * from class_info where del_flag='0'
+	</select>
 
 </mapper>

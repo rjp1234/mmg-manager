@@ -59,10 +59,17 @@ public interface ClassInfoDao extends CrudDao<ClassInfo> {
 
     /**
      * 
-     * updateGradeId(更新组)
+     * updateGradeId(更新班级所在的组)
      * 
      * 
      */
     public int updateGradeId(ClassInfo classInfo);
+
+    /**
+     * 
+     * getAll(这里用一句话描述这个方法的作用)
+     * 
+     */
+    public List<ClassInfo> getAll();
 
 }

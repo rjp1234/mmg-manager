@@ -9,6 +9,8 @@
  */
 package com.thinkgem.jeesite.modules.mmy.user.dao;
 
+import java.util.List;
+
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.mmy.user.entity.UserInfo;
@@ -23,5 +25,31 @@ import com.thinkgem.jeesite.modules.mmy.user.entity.UserInfo;
  */
 @MyBatisDao
 public interface UserInfoDao extends CrudDao<UserInfo> {
+
+    /**
+     * 
+     * insertBatch(批量插入方法)
+     * 
+     * 
+     */
+    int insertBatch(List<UserInfo> userList);
+
+    /**
+     * 
+     * countByLoginname(这里用一句话描述这个方法的作用)
+     * 
+     * @return
+     * 
+     * 
+     */
+    int countByLoginname(UserInfo userInfo);
+
+    /**
+     * 
+     * delById(根据id删除用户)
+     * 
+     * 
+     */
+    int delById(UserInfo userInfo);
 
 }

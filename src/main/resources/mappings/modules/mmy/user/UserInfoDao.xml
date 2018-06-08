@@ -3,12 +3,12 @@
 <mapper namespace="com.thinkgem.jeesite.modules.mmy.user.dao.UserInfoDao">
 	<select id="get" resultType="UserInfo">
 		SELECT * FROM user where id=#{id}
-		and del_flag=#{delFlag}
+		and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	<select id="findList" resultType="UserInfo">
 		select * from user
 		<where>
-			del_flag=#{delFlag}
+			del_flag=#{DEL_FLAG_NORMAL}
 			<if test="phonenum !=null and phonenum!=''">
 				and phonenum=#{phonenum}
 			</if>
@@ -16,12 +16,49 @@
 				and loginname like concat('%',#{loginname},'%')
 			</if>
 			<if test="nickname !=null and nickname!=''">
-				and nickname like concat('%' ，#{nickname},'%')
+				and nickname like concat('%' ,#{nickname},'%')
 			</if>
 			<if test="classId!='' and classId!=null">
 				and class_id = #{classId}
 			</if>
+			<if test="realname!='' and realname !=null">
+				and realname like concat('%',#{realname},'%')
+			</if>
 		</where>
 		order by create_time desc
 	</select>
+	<insert id="insertBatch">
+		insert into user 
+		(id,
+		loginname,
+		nickname,
+		image,
+		password,
+		user_type,
+		phonenum,
+		create_time,
+		class_id,
+		realname,
+		del_flag) values
+		<foreach collection="list" item="user" separator="," >
+			(#{user.id},
+			#{user.loginname},
+			#{user.nickname},
+			#{user.image},
+			#{user.password},
+			#{user.userType},
+			#{user.phonenum},
+			#{user.createTime},
+			#{user.classId},
+			#{user.realname},
+			#{user.DEL_FLAG_NORMAL}
+			)
+		</foreach>
+	</insert>
+	<select id="countByLoginname" resultType="int">
+		select count(1) from user where loginname=#{loginname} 
+	</select>
+	<update id="delById">
+		update user set del_flag=#{DEL_FLAG_DELETE} where id=#{id}
+	</update>	
 </mapper>

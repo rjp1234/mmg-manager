@@ -31,6 +31,8 @@ public class UserInfo extends DataEntity<UserInfo> {
 
     private String nickname;// 昵称
 
+    private String realname;// 真实姓名
+
     private String image;// 用户头像
 
     private int userType;// 用户类型
@@ -39,7 +41,35 @@ public class UserInfo extends DataEntity<UserInfo> {
 
     private String classId;// 所属班级
 
+    private String creater;// 创建人
+
+    private String gradeId;// 组名
+
     public static final int USER_TYPE_LOCAL_STUDENT = 0;// 用户类型为本地学生
+
+    public String getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(String gradeId) {
+        this.gradeId = gradeId;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname;
+    }
 
     public String getLoginname() {
         return loginname;

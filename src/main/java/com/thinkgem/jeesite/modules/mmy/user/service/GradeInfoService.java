@@ -44,6 +44,16 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
 
     /**
      * 
+     * getByClassId(根据班级名称去查询对应的组)
+     * 
+     * 
+     */
+    public GradeInfo getByClassId(String classId) {
+        return gradeDao.getByClassId(classId);
+    }
+
+    /**
+     * 
      * findList(获取组别列表分页)
      * 
      */
@@ -167,11 +177,11 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
             ThreadPool.getInstance().execute(() -> {
                 long difTime = System.currentTimeMillis() - timeStamp;
                 if (difTime > 2000) {
-                    System.err.println("grade 信息已经刷新");
+                    logger.info("grade 信息已经刷新");
                     timeStamp = System.currentTimeMillis();
                     bufferGradeMap.put(gradeId, getById(gradeId));
                 } else {
-                    System.err.println("grade 信息不刷新");
+                    logger.info("grade 信息不刷新");
                 }
             });
 

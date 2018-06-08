@@ -34,4 +34,7 @@
 	<update id="updateName">
 		UPDATE grade_info SET name=#{name} where id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
 	</update>
+<select id="getByClassId" resultType="GradeInfo">
+	select * from grade_info where id=(select grade_id from  class_info where id=#{classId} and del_flag ='0') and del_flag='0'
+</select>
 </mapper>
