@@ -39,6 +39,7 @@
 		create_time,
 		class_id,
 		realname,
+		creater,
 		del_flag) values
 		<foreach collection="list" item="user" separator="," >
 			(#{user.id},
@@ -51,14 +52,42 @@
 			#{user.createTime},
 			#{user.classId},
 			#{user.realname},
+			#{user.creater},
 			#{user.DEL_FLAG_NORMAL}
 			)
 		</foreach>
 	</insert>
 	<select id="countByLoginname" resultType="int">
-		select count(1) from user where loginname=#{loginname} 
+		select count(1) from user where loginname=#{loginname} and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	<update id="delById">
 		update user set del_flag=#{DEL_FLAG_DELETE} where id=#{id}
 	</update>	
+	<insert id="insert" >
+	 insert into user 
+		(id,
+		loginname,
+		nickname,
+		image,
+		password,
+		user_type,
+		phonenum,
+		create_time,
+		class_id,
+		realname,
+		creater,
+		del_flag) values
+		(#{id},
+			#{loginname},
+			#{nickname},
+			#{image},
+			#{password},
+			#{userType},
+			#{phonenum},
+			#{createTime},
+			#{classId},
+			#{realname},
+			#{creater},
+			#{DEL_FLAG_NORMAL})
+	</insert>
 </mapper>

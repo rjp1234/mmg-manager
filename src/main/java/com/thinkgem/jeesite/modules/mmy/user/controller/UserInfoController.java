@@ -162,12 +162,6 @@ public class UserInfoController extends BaseController {
 
     }
 
-    public static void main(String[] args) {
-        String errorMsg = "1234567,";
-        errorMsg = errorMsg.substring(0, errorMsg.lastIndexOf(","));
-        System.out.println(errorMsg);
-    }
-
     /**
      * 
      * analysisStuExcel(将特定格式的表格转换为user对象)
@@ -236,6 +230,7 @@ public class UserInfoController extends BaseController {
         Map<String, ClassInfo> classBufferMap = new HashMap<String, ClassInfo>();
         List<ClassInfo> classList = classService.getAll();
         for (ClassInfo classInfo : classList) {
+
             classBufferMap.put(classInfo.getId(), classInfo);
         }
         List<UserInfo> userList = page.getList();
@@ -262,6 +257,9 @@ public class UserInfoController extends BaseController {
             } else {
                 user.setGradeId(grade.getName());
             }
+            String creater = UserUtils.get(user.getCreater()).getLoginName();
+            user.setCreater(creater);
+
         }
         if (StringUtils.isNotBlank(gradeId)) {
             model.addAttribute("gradeId", gradeId);
@@ -298,9 +296,68 @@ public class UserInfoController extends BaseController {
     }
 
     @RequestMapping("createUser")
-    public String createUser(HttpServletRequest request, HttpServletResponse response, Model model, UserInfo userInfo) {
+    public String createUser(HttpServletRequest request, HttpServletResponse response, Model model, UserInfo userInfo,
+            RedirectAttributes redirectAttributes) {
 
-        return adminPath;
+        // 进行登录名重名检查
+        int i = userInfoService.countByLoginname(userInfo.getLoginname());
+        if (i != 0) {
+            addMessage(redirectAttributes, "创建失败:登录名已存在");
+            return "redirect:" + adminPath + "/operator/user/userForm";
+        }
+        // 班级校验
+        if (StringUtils.isBlank(userInfo.getClassId())) {
+            addMessage(redirectAttributes, "创建失败:必须绑定班级");
+            return "redirect:" + adminPath + "/operator/user/userForm";
+        }
+        ClassInfo classInfo = classInfoService.getById(userInfo.getClassId());
+        if (classInfo == null) {
+            addMessage(redirectAttributes, "创建失败:指定的班级不存在");
+            return "redirect:" + adminPath + "/operator/user/userForm";
+        }
+        if (StringUtils.isBlank(userInfo.getPassword()) || userInfo.getPassword().length() < 6) {
+            addMessage(redirectAttributes, "创建失败:密码长度不符合要求");
+            return "redirect:" + adminPath + "/operator/user/userForm";
+        }
+
+        userInfo.setCreater(UserUtils.getUser().getId());
+        userInfo.setId(IdGen.uuid());
+        userInfo.setCreateTime(TimeUtils.formateNowDay2());
+        userInfo.setImage(Global.getConfig("defaultImg"));
+        userInfo.setPassword(MD5Util.MD5(userInfo.getPassword()));
+        int count = 0;
+        try {
+            count = userInfoService.insert(userInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        if (count == 0) {
+            addMessage(redirectAttributes, "创建失败，请联系管理员");
+        }
+
+        return "redirect:" + adminPath + "/operator/user/userList";
+
+    }
+
+    @RequestMapping("delById")
+    @ResponseBody
+    public Map<String, Object> delById(HttpServletRequest request, HttpServletResponse response, Model model,
+            UserInfo userInfo, RedirectAttributes redirectAttributes) {
+        String id = request.getParameter("id");
+        int i = 0;
+        try {
+            i = userInfoService.delById(id);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        if (i > 0) {
+            returnMap.put("flag", true);
+        } else {
+            returnMap.put("flag", false);
+        }
+
+        return returnMap;
 
     }
 

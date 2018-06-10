@@ -79,4 +79,15 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
 
     }
 
+    /**
+     * 
+     * insert(这里用一句话描述这个方法的作用)
+     * 
+     */
+    @Transactional(readOnly = false)
+    public int insert(UserInfo userInfo) {
+
+        return userInfoDao.insert(userInfo);
+    }
+
 }
