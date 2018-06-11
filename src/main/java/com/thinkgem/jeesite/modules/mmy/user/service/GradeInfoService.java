@@ -9,9 +9,9 @@
  */
 package com.thinkgem.jeesite.modules.mmy.user.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -156,7 +156,7 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
         return gradeDao.get(grade);
     }
 
-    private static final Map<String, GradeInfo> bufferGradeMap = new HashMap<String, GradeInfo>();
+    private static final Map<String, GradeInfo> bufferGradeMap = new ConcurrentHashMap<String, GradeInfo>();
 
     private static long timeStamp = System.currentTimeMillis();// 时间除非主动更改，不会随系统时间变化而变
 
@@ -176,9 +176,10 @@ public class GradeInfoService extends CrudService<GradeInfoDao, GradeInfo> {
             // 以避免请求低命中率
             ThreadPool.getInstance().execute(() -> {
                 long difTime = System.currentTimeMillis() - timeStamp;
-                if (difTime > 2000) {
+                if (difTime > 10000) {
                     logger.info("grade 信息已经刷新");
                     timeStamp = System.currentTimeMillis();
+                    bufferGradeMap.clear();
                     bufferGradeMap.put(gradeId, getById(gradeId));
                 } else {
                     logger.info("grade 信息不刷新");

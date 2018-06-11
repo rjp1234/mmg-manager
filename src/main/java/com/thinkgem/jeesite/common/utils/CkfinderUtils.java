@@ -37,6 +37,7 @@ public class CkfinderUtils {
                 + ckPath.substring(ckPath.indexOf(Global.USERFILES_BASE_URL) + 1);
         File file = new File(realPath);
         if (file.exists()) {
+            System.out.println(file.getPath());
             return file;
         }
         return null;

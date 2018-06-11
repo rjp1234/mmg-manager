@@ -13,8 +13,10 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,7 +102,7 @@ public class UserInfoController extends BaseController {
      * 
      */
     @RequestMapping("userBatchCreate")
-    public String userBatchCreate(HttpServletRequest request, HttpServletResponse response, Model model,
+    public synchronized String userBatchCreate(HttpServletRequest request, HttpServletResponse response, Model model,
             UserInfo userInfo, RedirectAttributes redirectAttributes) {
         String classId = userInfo.getClassId();
         if (StringUtils.isBlank(classId)) {
@@ -123,6 +125,19 @@ public class UserInfoController extends BaseController {
         // 从表格中获取realname , loginname,password,phonenum
         List<UserInfo> userList = analysisStuExcel(file);
         List<UserInfo> errorUserList = new ArrayList<UserInfo>();
+
+        // 对表格存在的重名进行检查
+        Set<String> loginnameCheck = new HashSet<String>();
+        for (UserInfo user : userList) {
+            if (loginnameCheck.contains(user.getLoginname())) {
+                errorUserList.add(user);
+            } else {
+                loginnameCheck.add(user.getLoginname());
+            }
+        }
+        // 将表格中携带的重名用户移除
+        userList.removeAll(errorUserList);
+
         for (UserInfo userInfo2 : userList) {
             // 进行登录名重名检查
             int i = userInfoService.countByLoginname(userInfo2.getLoginname());

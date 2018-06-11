@@ -2,56 +2,33 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<title>个人信息</title>
+<title>教材信息</title>
 <meta name="decorator" content="default" />
 <script type="text/javascript">
 	top.$.jBox.tip.mess = null;
-	var loginnameFlag = false;
-	function submit() {
-	
-	}
-	function checkLoginName(e) {
-		var loginname = e.value;
-		console.log(loginname.length);
-		if (loginname.length < 6) {
-			$("#msg").html("<span style='color:red'>登录名不得少于6个字符</span>");
-			return;
+	function submitCheck() {
+		var len=$("#name").val().length;
+		if(len==0){
+			alertx("教材名称不得为空");
+			return false;
 		}
-		$.ajax({
-			url : '${ctx}/operator/user/checkLoginName',
-			type : 'post',
-			data : "loginname=" + loginname,
-			dataType : 'json',
-			success : function(data) {
-				$("#msg").html(data.msg);
-				globalFlag = data.flag;
-			}
-		});
-	}
-	function gradeChange(e) {
-		var id = e.value;
-		$.ajax({
-			url : '${ctx}/operator/class/getByGradeId',
-			type : 'post',
-			data : "gradeId=" + id,
-			dataType : 'json',
-			success : function(res) {
-				var flag = res.flag;
-				if (!flag) {
-					alertx("获取班级数据失败，请刷新重试");
-					return;
-				}
-				var data = res.data;
-				var element = $("#classId");
-				var str = "<option value=''>请选择</option>";
-				for (var i = 0; i < data.length; i++) {
-					str = str + "<option value='" + data[i].id + "'>" + data[i].name + "</option>";
-				}
-				element.html(str);
-
-			}
-		});
-
+		len=$("#gradeId").val().length
+		if(len==0){
+			alertx("请选择组别");
+			return false;
+		}
+		len=$("#unitNum").val();
+		if(len<1){
+			alertx("单元数必须大于等于1");
+			return false;
+		}
+		len=$("#imageUrl").val().length;
+		if(len==0){
+			alertx("请选择封面");
+			return false;
+		}
+		return true;
+	
 	}
 </script>
 </head>
@@ -68,14 +45,14 @@
 		<div class="control-group">
 			<label class="control-label">教材名称:</label>
 			<div class="controls">
-				<form:input  path="name" htmlEscape="false"
+				<form:input id="name"  path="name" htmlEscape="false"
 					maxlength="50" />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">组别:</label>
 			<div class="controls">
-				<form:select path="gradeId" width="20%" onchange="gradeChange(this)">
+				<form:select path="gradeId" width="20%"  id="gradeId">
 					<form:option value="">请选择</form:option>
 					<c:forEach items="${gradeList}" var='grade'>
 						<form:option value="${grade.id}">${grade.name}</form:option>
@@ -86,7 +63,7 @@
 		<div class="control-group">
 			<label class="control-label">教材单元数:</label>
 			<div class="controls">
-				<form:input  path="unitNum" htmlEscape="false"
+				<form:input id="unitNum"  path="unitNum" htmlEscape="false"
 					maxlength="50" />
 			</div>
 		</div>
@@ -99,10 +76,9 @@
 			</div>
 			<br> <br>
 		</div>
-		
 		<div class="form-actions">
 			<input id="btnSubmit" class="btn btn-primary" type="submit"
-				onclick="return submit();" value="保 存" />
+				onclick="return submitCheck();" value="保 存" />
 		</div>
 	</form:form>
 </body>

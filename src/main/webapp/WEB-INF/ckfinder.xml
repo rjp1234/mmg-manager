@@ -52,6 +52,13 @@
 			<allowedExtensions>swf,flv</allowedExtensions>
 			<deniedExtensions></deniedExtensions>
 		</type>
+		<type name="studio">
+			<url>%BASE_URL%studio/</url>
+			<directory>%BASE_DIR%studio</directory>
+			<maxSize>100M</maxSize>
+			<allowedExtensions>mp3</allowedExtensions>
+			<deniedExtensions></deniedExtensions>
+		</type>
 	</types>
 	<accessControls>
 		<accessControl>
