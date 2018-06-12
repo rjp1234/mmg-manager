@@ -187,4 +187,16 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
         return classDao.getAll();
     }
 
+    /**
+     * 
+     * countByGradeId(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    public int countByGradeId(String gradeId) {
+        ClassInfo classInfo = new ClassInfo();
+        classInfo.setGradeId(gradeId);
+        return dao.countByGradeId(classInfo);
+    }
+
 }

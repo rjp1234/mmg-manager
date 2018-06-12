@@ -30,10 +30,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
+import com.thinkgem.jeesite.modules.mmy.book.entity.LessionClassBindInfo;
+import com.thinkgem.jeesite.modules.mmy.book.entity.LessionInfo;
+import com.thinkgem.jeesite.modules.mmy.book.service.LessionClassBindService;
+import com.thinkgem.jeesite.modules.mmy.book.service.LessionInfoService;
+import com.thinkgem.jeesite.modules.mmy.book.service.TextBookService;
 import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
 import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
+import com.thinkgem.jeesite.modules.mmy.user.entity.UserInfo;
 import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
+import com.thinkgem.jeesite.modules.mmy.user.service.UserInfoService;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
@@ -52,6 +59,18 @@ public class ClassInfoController extends BaseController {
 
     @Autowired
     GradeInfoService gradeService;
+
+    @Autowired
+    LessionClassBindService bindService;
+
+    @Autowired
+    LessionInfoService lessionService;
+
+    @Autowired
+    TextBookService textService;
+
+    @Autowired
+    UserInfoService userInfoService;
 
     @ModelAttribute
     public ClassInfo get(@RequestParam(required = false) String id) {
@@ -221,8 +240,30 @@ public class ClassInfoController extends BaseController {
     @RequestMapping("delClassById")
     public String delClassById(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
             Model model, RedirectAttributes redirectAttributes) {
+        // 班级下学生删除
+        List<UserInfo> userList = userInfoService.getListByClassId(classInfo.getId());
+
+        for (UserInfo userInfo : userList) {
+            try {
+                int j = userInfoService.delById(userInfo.getId());
+                System.out.println(j);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        // 班级下课程关联删除
+        List<LessionClassBindInfo> bindList = bindService.getByClassId(classInfo.getId());
+        for (LessionClassBindInfo bind : bindList) {
+            try {
+                int j = bindService.delById(bind.getId());
+                System.out.println(j);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
 
         int i = classService.delById(classInfo.getId());
+
         if (i == 1) {
             addMessage(redirectAttributes, "删除成功");
         } else {
@@ -230,6 +271,24 @@ public class ClassInfoController extends BaseController {
         }
 
         return "redirect:" + adminPath + "/operator/class/classList";
+
+    }
+
+    @RequestMapping("getLessionByClassId")
+    public String getLessionByClassId(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
+            Model model, RedirectAttributes redirectAttributes) {
+        String classId = classInfo.getId();
+        List<LessionClassBindInfo> bindList = bindService.getByClassId(classId);
+        List<LessionInfo> lessionList = new ArrayList<LessionInfo>();
+        for (LessionClassBindInfo bind : bindList) {
+            LessionInfo lessionInfo = lessionService.getById(bind.getLessionId());
+            lessionInfo.setTextId(textService.getByIdBuffer(lessionInfo.getTextId()).getName());
+            lessionList.add(lessionInfo);
+        }
+        model.addAttribute("lessionList", lessionList);
+        model.addAttribute("classInfo", classInfo);
+        addMessage(model, "当前正在查看班级：" + classInfo.getName() + "的下发课文");
+        return "modules/mmy/class/classBindLessionList";
 
     }
 

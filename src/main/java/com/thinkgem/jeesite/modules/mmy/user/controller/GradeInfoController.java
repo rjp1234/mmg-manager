@@ -30,6 +30,7 @@ import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
+import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
@@ -47,6 +48,9 @@ import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 public class GradeInfoController extends BaseController {
     @Autowired
     GradeInfoService gradeInfoService;
+
+    @Autowired
+    ClassInfoService classService;
 
     @ModelAttribute
     public GradeInfo get(@RequestParam(required = false) String id) {
@@ -139,7 +143,15 @@ public class GradeInfoController extends BaseController {
     public String delete(HttpServletRequest request, HttpServletResponse response, Model model,
             RedirectAttributes redirectAttributes) {
         String id = request.getParameter("id");
-        int i = gradeInfoService.delById(id);
+        int i = 0;
+        i = classService.countByGradeId(id);
+        if (i > 0) {
+            addMessage(redirectAttributes, "删除失败，请先删除该组下全部班级，再删除该组");
+            return "redirect:" + adminPath + "/operator/grade/gradeList";
+        }
+
+        i = gradeInfoService.delById(id);
+
         if (i == 1) {
             addMessage(redirectAttributes, "删除成功");
         }

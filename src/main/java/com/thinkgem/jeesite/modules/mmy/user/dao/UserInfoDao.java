@@ -52,4 +52,12 @@ public interface UserInfoDao extends CrudDao<UserInfo> {
      */
     int delById(UserInfo userInfo);
 
+    /**
+     * 
+     * getListByClassId(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    List<UserInfo> getListByClassId(UserInfo userInfo);
+
 }

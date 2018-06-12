@@ -72,4 +72,12 @@ public interface ClassInfoDao extends CrudDao<ClassInfo> {
      */
     public List<ClassInfo> getAll();
 
+    /**
+     * 
+     * countByGradeId(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    public int countByGradeId(ClassInfo classInfo);
+
 }

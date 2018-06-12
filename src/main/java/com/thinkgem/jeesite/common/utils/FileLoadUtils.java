@@ -127,7 +127,11 @@ public class FileLoadUtils {
             source = "http://" + source + "/" + name;
             // 将图片上传至七牛
             final String path = sourcePath;
-            ThreadPool.getInstance().execute(() -> FileLoadUtils.fileUpload(path, name));
+            try {
+                ThreadPool.getInstance().execute(() -> FileLoadUtils.fileUpload(path, name));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
         }
         return source;
 

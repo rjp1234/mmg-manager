@@ -79,4 +79,36 @@ public class LessionInfoService extends CrudService<LessionInfoDao, LessionInfo>
         return dao.countByName(lessionInfo);
     }
 
+    /**
+     * 
+     * lessionIssueClass(这里用一句话描述这个方法的作用)
+     */
+    @Transactional
+    public int lessionIssueClass(String lessionId, String classId) {
+        return dao.lessionIssueClass(lessionId, classId);
+
+    }
+
+    /**
+     * 
+     * countLessionByTextId(根据教材查询其下所有课文的数量)
+     */
+    public int countLessionByTextId(String textId) {
+        LessionInfo lession = new LessionInfo();
+        lession.setTextId(textId);
+        return dao.countLessionByTextId(lession);
+    }
+
+    /**
+     * 
+     * delById(这里用一句话描述这个方法的作用)
+     * 
+     */
+    @Transactional(readOnly = false)
+    public int delById(String lessionId) {
+        LessionInfo lession = new LessionInfo();
+        lession.setId(lessionId);
+        return dao.delById(lession);
+    }
+
 }

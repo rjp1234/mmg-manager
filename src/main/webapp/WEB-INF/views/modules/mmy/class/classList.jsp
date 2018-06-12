@@ -89,7 +89,9 @@ function doubleCheck(msg){
 						class="btn btn-primary" >编辑</a>&nbsp;<a
 						class="btn btn-primary"
 						onclick="return doubleCheck('请确认是否删除该班级？该班级下所有学生信息将会失去关联需要重新设置')"
-						href="${ctx}/operator/class/delClassById?id=${classInfo.id}">删除</a></td>
+						href="${ctx}/operator/class/delClassById?id=${classInfo.id}">删除</a>
+						<a href="${ctx}/operator/class/getLessionByClassId?id=${classInfo.id}">查看下发课文</a>
+						</td>
 				</tr>
 			</c:forEach>
 		</tbody>

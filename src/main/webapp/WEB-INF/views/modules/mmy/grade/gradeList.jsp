@@ -146,7 +146,6 @@ function doubleCheck(msg){
 			<tr>
 				<th style="width:10px">序号</th>
 				<th>组名</th>
-				<th>id</th>
 				<th>创建人</th>
 				<th>创建日期</th>
 				<th>操作</th>
@@ -157,13 +156,12 @@ function doubleCheck(msg){
 				<tr id="tr${status.index }">
 					<td>${status.index+1 }</td>
 					<td  id="gradename${grade.id}">${grade.name}</td>
-					<td>${grade.id}</td>
 					<td>${grade.creater}</td>
 					<td>${grade.createTime}</td>
 					<td
 					><input id="name${grade.id}"  class="input-medium" >&nbsp;<input
 						onclick="changeGradeName('${grade.id}')" type="button"
-						class="btn btn-primary"  value="更改">&nbsp;<a class="btn btn-primary" onclick="return doubleCheck('请确认是否删除该组？该组下所有信息将会失去关联需要重新设置')" href="${ctx}/operator/grade/delete?id=${grade.id}">删除</a></td>
+						class="btn btn-primary"  value="更改">&nbsp;<a class="btn btn-primary" onclick="return doubleCheck('请确认是否删除该组？')" href="${ctx}/operator/grade/delete?id=${grade.id}">删除</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>

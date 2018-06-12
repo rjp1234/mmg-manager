@@ -11,9 +11,13 @@ package com.thinkgem.jeesite.modules.mmy.book.controller;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,10 +38,16 @@ import com.thinkgem.jeesite.common.utils.FileLoadUtils;
 import com.thinkgem.jeesite.common.utils.IdGen;
 import com.thinkgem.jeesite.common.utils.TimeUtils;
 import com.thinkgem.jeesite.common.web.BaseController;
+import com.thinkgem.jeesite.modules.mmy.book.entity.LessionClassBindInfo;
 import com.thinkgem.jeesite.modules.mmy.book.entity.LessionInfo;
 import com.thinkgem.jeesite.modules.mmy.book.entity.TextBookInfo;
+import com.thinkgem.jeesite.modules.mmy.book.service.LessionClassBindService;
 import com.thinkgem.jeesite.modules.mmy.book.service.LessionInfoService;
 import com.thinkgem.jeesite.modules.mmy.book.service.TextBookService;
+import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
+import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
+import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
+import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
@@ -56,6 +66,15 @@ public class LessionController extends BaseController {
 
     @Autowired
     TextBookService textBookService;
+
+    @Autowired
+    GradeInfoService gradeService;
+
+    @Autowired
+    ClassInfoService classService;
+
+    @Autowired
+    LessionClassBindService lessionClassBindService;
 
     @ModelAttribute
     public LessionInfo get(@RequestParam(required = false) String id) {
@@ -253,6 +272,24 @@ public class LessionController extends BaseController {
 
     }
 
+    @RequestMapping("getClassInfoListByLession")
+    public String getClassInfoListByLession(HttpServletRequest request, HttpServletResponse response,
+            LessionInfo lessionInfo, RedirectAttributes redirectAttributes, Model model) {
+        List<LessionClassBindInfo> bindList = lessionClassBindService.getByLessionId(lessionInfo.getId());
+        List<ClassInfo> classList = new ArrayList<ClassInfo>();
+        for (LessionClassBindInfo bind : bindList) {
+            ClassInfo classInfo = classService.getById(bind.getClassId());
+            classInfo.setGradeId(gradeService.getByIdBuffer(classInfo.getGradeId()).getName());
+            classInfo.setCreater(UserUtils.get(classInfo.getCreater()).getLoginName());
+            classList.add(classInfo);
+        }
+        model.addAttribute("lessionInfo", lessionInfo);
+        model.addAttribute("classList", classList);
+        addMessage(model, "当前正在查看课文:" + lessionInfo.getName() + "的下发班级列表");
+        return "modules/mmy/lession/lessionBindClassList";
+
+    }
+
     @RequestMapping("checkLessionName")
     @ResponseBody
     public Map<String, Object> checkLessionName(HttpServletRequest request, HttpServletResponse response) {
@@ -275,6 +312,57 @@ public class LessionController extends BaseController {
 
     }
 
+    @RequestMapping("lessionIssueClassList")
+    @ResponseBody
+    public Map<String, Object> lessionIssueClassList(HttpServletRequest request, HttpServletResponse response) {
+        String lessionId = request.getParameter("lessionId");
+        LessionInfo lession = lessionService.getById(lessionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("flag", false);
+        map.put("msg", "获取班级信息失败");
+        if (lession == null) {
+            return map;
+        }
+        TextBookInfo text = textBookService.getById(lession.getTextId());
+        if (text == null) {
+            return map;
+        }
+        GradeInfo grade = gradeService.getById(text.getGradeId());
+        if (grade == null) {
+            return map;
+        }
+        try {
+            // 获得即将下发的班级
+            List<ClassInfo> classList = classService.getListByGrade(grade.getId());
+            // 移除已经下发过的班级
+            // 获取全部下发过该课程的班级
+            List<LessionClassBindInfo> bindList = lessionClassBindService.getByLessionId(lessionId);
+            Set<String> classBindId = new HashSet<String>();
+            // 将班级的id提取
+            for (LessionClassBindInfo bind : bindList) {
+                classBindId.add(bind.getClassId());
+            }
+
+            Iterator<ClassInfo> iterator = classList.iterator();
+            while (iterator.hasNext()) {
+                ClassInfo c = iterator.next();
+                // 该班级已经在绑定列表中，则移除，不需要重复绑定
+                if (classBindId.contains(c.getId())) {
+                    iterator.remove();
+                }
+            }
+
+            map.put("flag", true);
+            map.put("data", classList);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return map;
+
+    }
+
     /**
      * 
      * lessionIssue(课程下发)
@@ -284,10 +372,85 @@ public class LessionController extends BaseController {
     @RequestMapping("lessionIssue")
     @ResponseBody
     public Map<String, Object> lessionIssue(HttpServletRequest request, HttpServletResponse response) {
-        String classId = request.getParameter("classId");
 
+        // String issueType = request.getParameter("issueType");
+        String lessionId = request.getParameter("lessionId");
+        String classId = request.getParameter("classId");
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("flag", false);
+        map.put("msg", "下发失败，请联系管理员");
+        if (StringUtils.isBlank(classId) || StringUtils.isBlank(lessionId)) {
+            return map;
+        }
+        try {
+            int i = lessionClassBindService.lessionBindClass(lessionId, classId);
+            if (i == -1) {
+                map.put("msg", "该课文已经对该班级进行过下发，不必重复提交");
+                return map;
+            }
+            if (i == 1) {
+                ClassInfo classInfo = classService.getById(classId);
+                LessionInfo lession = lessionService.getById(lessionId);
+                map.put("msg", "课文:<span style='color:green'>" + lession.getName()
+                        + "</span>下发到班级:<span style='color:green'>" + classInfo.getName() + "</span>成功");
+                map.put("flag", true);
+                return map;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return map;
+    }
+
+    @RequestMapping("cancelIssue")
+    @ResponseBody
+    public Map<String, Object> cancelIssue(HttpServletRequest request, HttpServletResponse response) {
+        String lessionId = request.getParameter("lessionId");
+        String classId = request.getParameter("classId");
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("flag", false);
+        map.put("msg", "解除下发失败");
+        if (StringUtils.isBlank(lessionId) || StringUtils.isBlank(classId)) {
+            return map;
+        }
+        try {
+            int i = lessionClassBindService.delByClassIdAndLessionId(classId, lessionId);
+            if (i == 1) {
+                map.put("flag", true);
+                map.put("msg", "解除下发成功");
+                return map;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
         return null;
 
+    }
+
+    @RequestMapping("delById")
+    @ResponseBody
+    public synchronized Map<String, Object> delById(HttpServletRequest request, HttpServletResponse response) {
+        String lessionId = request.getParameter("lessionId");
+        List<LessionClassBindInfo> bindList = lessionClassBindService.getByLessionId(lessionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("flag", false);
+        map.put("msg", "删除失败");
+        // 删除该课文与全部班级之间关联
+        for (LessionClassBindInfo bind : bindList) {
+            try {
+                lessionClassBindService.delById(bind.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        int i = lessionService.delById(lessionId);
+        if (i > 0) {
+            map.put("flag", true);
+            map.put("msg", "删除成功");
+        }
+
+        return map;
     }
 
 }

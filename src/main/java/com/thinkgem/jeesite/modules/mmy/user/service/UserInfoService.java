@@ -90,4 +90,16 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
         return userInfoDao.insert(userInfo);
     }
 
+    /**
+     * 
+     * getListByClassId(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    public List<UserInfo> getListByClassId(String classId) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setClassId(classId);
+        return dao.getListByClassId(userInfo);
+    }
+
 }

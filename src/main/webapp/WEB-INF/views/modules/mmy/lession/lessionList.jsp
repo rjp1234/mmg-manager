@@ -16,8 +16,6 @@
 	type="text/css" rel="stylesheet">
 <script type="text/javascript">
 	top.$.jBox.tip.mess = null;
-
-
 	function page(n, s) {
 		$("#pageNo").val(n);
 		$("#pageSize").val(s);
@@ -25,7 +23,7 @@
 		return false;
 	}
 	function delById(e, id) {
-		var con = confirm("请确认是否删除该课文");
+		var con = confirm("请确认是否删除该课文,删除该课文同时会将其与下发班级解绑");
 		if (!con) {
 			return;
 		}
@@ -37,7 +35,7 @@
 		$.ajax({
 			url : '${ctx}/operator/lession/delById',
 			type : 'post',
-			data : "id=" + id,
+			data : "lessionId=" + id,
 			dataType : 'json',
 			success : function(res) {
 				var flag = res.flag;
@@ -50,6 +48,66 @@
 
 			}
 		});
+	}
+	function alertWindow(lessionId, lessionname) {
+		$.ajax({
+			url : '${ctx}/operator/lession/lessionIssueClassList',
+			type : 'post',
+			data : "lessionId=" + lessionId,
+			dataType : 'json',
+			success : function(data) {
+				if (data.flag) {
+					//获取成功，进行填充
+					var classArr = data.data;
+					var str = '<option value="">请选择</option>';
+					for (var i = 0; i < classArr.length; i++) {
+						classArr[0];
+						str = str + '<option value="' + classArr[i].id + '">' + classArr[i].name + '</option>';
+					}
+					$("#lessionId").val(lessionId);
+					$("#issueClassList").html(str);
+					$("#lessionname").html(lessionname);
+					document.getElementById("alertWindow").style.display = '';
+				} else {
+					//获取失败					
+					alertx(data.msg);
+				}
+			}
+		});
+
+	}
+	function closeWindow() {
+		document.getElementById("alertWindow").style.display = "none";
+	}
+	function issueLession() {
+		var classId = $("#issueClassList").val();
+		if (classId.length == 0) {
+			alertx("请选择班级");
+			return;
+		}
+
+		var lessionId = $("#lessionId").val();
+		if (lessionId.length == 0) {
+			alertx("请选择课文");
+			return;
+		}
+
+		$.ajax({
+			url : '${ctx}/operator/lession/lessionIssue',
+			type : 'post',
+			data : "lessionId=" + lessionId+"&classId="+classId,
+			dataType : 'json',
+			success : function(data) {
+				if (data.flag) {
+					closeWindow();
+					alertx(data.msg);
+				} else {
+					alertx(data.msg);
+				}
+			}
+		});
+
+
 	}
 </script>
 <style type="text/css">
@@ -78,12 +136,11 @@
 			<li><label>课文名称：</label> <form:input path='name'
 					htmlEscape="false" maxlength="50" class="input-medium" /></li>
 			<li><label>教材名称：</label> <form:select path='textId'
-					htmlEscape="false" maxlength="50" class="input-medium" >
+					htmlEscape="false" maxlength="50" class="input-medium">
 					<c:forEach items="${textList}" var='text'>
 						<form:option value="${text.id}">${text.name}</form:option>
 					</c:forEach>
-					</form:select>
-					</li>
+				</form:select></li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary"
 				type="submit" value="查询" /></li>
 		</ul>
@@ -117,7 +174,9 @@
 					<td>${lession.creater}</td>
 					<td>${lession.createTime}</td>
 					<td><input class="btn" type="button" value="删除"
-						onclick="delById(this,'${book.id}')"></td>
+						onclick="delById(this,'${lession.id}')">&nbsp;<input
+						class="btn" type="button" value="下发课文"
+						onclick="alertWindow('${lession.id}','${lession.name}')">&nbsp;<a href="${ctx}/operator/lession/getClassInfoListByLession?id=${lession.id}">查看已下发班级</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -125,6 +184,26 @@
 
 
 	<div class="pagination">${page}</div>
-
+	<div id="alertWindow" style="display:none;"
+		class="form-horizontal windowsClass">
+		<input id="lessionId" type="hidden">
+		<div class="control-group">
+			<label class="control-label">下发课程:</label>
+			<div class="controls" id="lessionname"></div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">下发班级:</label>
+			<div class="controls">
+				<select id="issueClassList">
+					<option value="">请选择</option>
+				</select><br>
+			</div>
+			<div class="form-actions">
+				<input onclick="issueLession()" type="button"
+					class="btn btn-primary" value="确认下发">&nbsp; <input
+					onclick="closeWindow()" type="button" class="btn" value="关闭">
+			</div>
+		</div>
+	</div>
 </body>
 </html>

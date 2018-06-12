@@ -71,13 +71,18 @@ public class TextBookService extends CrudService<TextBookDao, TextBookInfo> {
         TextBookInfo text = textBufferMap.get(id);
         if (text == null) {
             text = getById(id);
-            textBufferMap.put(id, text);
+            if (text != null) {
+                textBufferMap.put(id, text);
+            } else {
+                return new TextBookInfo();
+            }
         } else {
             long differ = System.currentTimeMillis() - lastModifyTime;
             if (differ > 10000) {
                 try {
                     textBufferMap.clear();
-                    ThreadPool.getInstance().execute(() -> textBufferMap.put(id, getById(id)));
+                    ThreadPool.getInstance().execute(
+                            () -> textBufferMap.put(id, getById(id) == null ? new TextBookInfo() : getById(id)));
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 }

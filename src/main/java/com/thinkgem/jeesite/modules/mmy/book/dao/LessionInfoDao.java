@@ -9,6 +9,8 @@
  */
 package com.thinkgem.jeesite.modules.mmy.book.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.mmy.book.entity.LessionInfo;
@@ -40,5 +42,26 @@ public interface LessionInfoDao extends CrudDao<LessionInfo> {
      * 
      */
     int countByName(LessionInfo lessionInfo);
+
+    /**
+     * 
+     * lessionIssueClass(这里用一句话描述这个方法的作用)
+     * 
+     */
+    int lessionIssueClass(@Param("lessionId") String lessionId, @Param("classId") String classId);
+
+    /**
+     * 
+     * countLessionByTextId(这里用一句话描述这个方法的作用)
+     * 
+     */
+    int countLessionByTextId(LessionInfo lession);
+
+    /**
+     * 
+     * delById(这里用一句话描述这个方法的作用)
+     * 
+     */
+    int delById(LessionInfo lession);
 
 }

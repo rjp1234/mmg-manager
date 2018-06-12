@@ -20,7 +20,7 @@ var globalFlag = false;
 function checkName() {
 		globalFlag = false;
 		var name = $("#className").val();
-		if (name.length < 2) {
+		if (name.length < 4) {
 			$("#classMsg").html("<span style='color:red'>名称太短</span>");
 			return;
 		}

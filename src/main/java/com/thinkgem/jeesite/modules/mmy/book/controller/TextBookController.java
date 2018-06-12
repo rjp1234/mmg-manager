@@ -36,6 +36,7 @@ import com.thinkgem.jeesite.common.utils.TimeUtils;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.mmy.book.entity.TextBookInfo;
 import com.thinkgem.jeesite.modules.mmy.book.entity.UnitInfo;
+import com.thinkgem.jeesite.modules.mmy.book.service.LessionInfoService;
 import com.thinkgem.jeesite.modules.mmy.book.service.TextBookService;
 import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
@@ -57,6 +58,9 @@ public class TextBookController extends BaseController {
 
     @Autowired
     GradeInfoService gradeService;
+
+    @Autowired
+    LessionInfoService lessionService;
 
     @ModelAttribute
     public TextBookInfo get(@RequestParam(required = false) String id) {
@@ -183,7 +187,18 @@ public class TextBookController extends BaseController {
         returnMap.put("flag", false);
         returnMap.put("msg", "删除失败，请联系管理员");
         String id = request.getParameter("id");
+        // 先查询教材下是否存在课文
         int i = 0;
+        try {
+            i = lessionService.countLessionByTextId(id);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        if (i > 0) {
+            returnMap.put("msg", "删除失败，请先清空教材下的课文");
+            return returnMap;
+        }
+
         try {
             i = textBookService.delById(id);
         } catch (Exception e) {

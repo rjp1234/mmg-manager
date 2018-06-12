@@ -42,7 +42,7 @@
 			success : function(res) {
 				var flag = res.flag;
 				if (!flag) {
-					alertx("删除失败，请联系管理员");
+					alertx(res.msg);
 					return;
 				}else{
 					$(e).parent().html("<span>删除成功</span>");
