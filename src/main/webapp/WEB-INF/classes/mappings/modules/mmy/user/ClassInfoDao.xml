@@ -17,7 +17,7 @@
 				and grade_id=#{gradeId}
 			</if>
 		</where>
-		ORDER BY create_time
+		ORDER BY name 
 	</select>
 	<select id="countByClassName" resultType="int">
 		select count(1) from
@@ -37,7 +37,7 @@
 		where id=#{id}
 	</update>
 	<select id="findList" resultType="ClassInfo">
-		select * from class_info
+		select * from class_info c
 		<where>
 			del_flag=#{DEL_FLAG_NORMAL}
 			<if test="name!=null and name!=''">
@@ -47,7 +47,7 @@
 				and grade_id=#{gradeId}
 			</if>
 		</where>
-		ORDER BY create_time
+		ORDER BY (select name from grade_info g where g.id=c.grade_id),name
 	</select>
 	<update id="updateGradeId">
 		update class_info set grade_id=(select id from grade_info where id=#{gradeId} and del_flag=#{delFlag})

@@ -125,9 +125,156 @@ public class LessionController extends BaseController {
     public String lessionForm(HttpServletRequest request, HttpServletResponse response, LessionInfo lessionInfo,
             RedirectAttributes redirectAttributes, Model model) {
         List<TextBookInfo> textList = textBookService.getAll();
-
         model.addAttribute("textList", textList);
         return "modules/mmy/lession/lessionForm";
+    }
+
+    @RequestMapping("detailsForm")
+    public String detailsForm(HttpServletRequest request, HttpServletResponse response, LessionInfo lessionInfo,
+            RedirectAttributes redirectAttributes, Model model) {
+        List<TextBookInfo> textList = textBookService.getAll();
+        model.addAttribute("textList", textList);
+        try {
+            lessionInfo.setTextId(textBookService.getById(lessionInfo.getTextId()).getName());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        String unit = "第" + lessionInfo.getUnit() + "单元";
+        model.addAttribute("unit", unit);
+
+        return "modules/mmy/lession/lessionDetailForm";
+    }
+
+    @RequestMapping("modifyLession")
+    public synchronized String modifyLession(HttpServletRequest request, HttpServletResponse response,
+            LessionInfo lessionInfo, RedirectAttributes redirectAttributes, Model model) {
+        String lessionId = lessionInfo.getId();
+        LessionInfo lessionChange = new LessionInfo();
+        lessionChange.setId(lessionId);
+        TextBookInfo text = textBookService.getById(lessionInfo.getTextId());
+        LessionInfo originLession = lessionService.getById(lessionId);
+        if (StringUtils.isNotBlank(lessionInfo.getName())
+                && !StringUtils.equals(lessionInfo.getName(), originLession.getName())) {
+            logger.info("名称更新");
+            int i = lessionService.countLessionByName(lessionInfo.getName());
+            if (i > 0) {
+                addMessage(redirectAttributes, "存在重名课文，请修改");
+                return "redirect:" + adminPath + "/operator/lession/lessionForm?id=" + lessionId;
+            }
+            lessionChange.setName(lessionInfo.getName());
+
+        }
+        if (StringUtils.isNotBlank(lessionInfo.getTextId())
+                && !StringUtils.equals(lessionInfo.getTextId(), originLession.getTextId())) {
+            logger.info("更新所属教材");
+
+            if (text == null) {
+                addMessage(redirectAttributes, "教材不存在，请重新选择");
+                return "redirect:" + adminPath + "/operator/lession/lessionForm?id=" + lessionId;
+            }
+            lessionChange.setTextId(text.getId());
+
+        }
+
+        if (lessionInfo.getUnit() != 0 && originLession.getUnit() != lessionInfo.getUnit()) {
+            logger.info("单元更新");
+            if (text.getUnitNum() < lessionInfo.getUnit()) {
+                addMessage(redirectAttributes, "单元错误，请重新选择");
+                return "redirect:" + adminPath + "/operator/lession/lessionForm?id=" + lessionId;
+
+            }
+            lessionChange.setUnit(lessionInfo.getUnit());
+
+        }
+        if (StringUtils.isNotBlank(lessionInfo.getContent())
+                && !StringUtils.equals(originLession.getContent(), lessionInfo.getContent())) {
+            logger.info("文本更新");
+            lessionChange.setContent(lessionInfo.getContent());
+
+        }
+
+        if (StringUtils.isNotBlank(lessionInfo.getExampleUrl())
+                && !StringUtils.equals(lessionInfo.getExampleUrl(), originLession.getExampleUrl())) {
+            logger.info("更新示范录音");
+            File file = null;
+            try {
+                file = CkfinderUtils.getFileFromCkpath(lessionInfo.getExampleUrl());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+            if (file == null) {
+                addMessage(redirectAttributes, "示范录音路径错误，请重新选择");
+                return "redirect:" + adminPath + "/operator/lession/lessionForm?id=" + lessionId;
+            }
+            try {
+                String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_STUDIO_TEA, file.getPath(),
+                        IdGen.uuid() + ".mp3");
+                lessionChange.setExampleUrl(path);
+            } catch (Exception e) {
+                addMessage(redirectAttributes, "示范录音路径错误，请重新选择");
+                logger.error(e.getMessage(), e);
+            }
+
+        }
+        if (StringUtils.isNotBlank(lessionInfo.getImage())
+                && !StringUtils.equals(lessionInfo.getImage(), originLession.getImage())) {
+            logger.info("更新封面");
+            File file = null;
+            try {
+                file = CkfinderUtils.getFileFromCkpath(lessionInfo.getImage());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+            if (file == null) {
+                addMessage(redirectAttributes, "封面路径错误，请重新选择");
+                return "redirect:" + adminPath + "/operator/lession/lessionForm?id=" + lessionId;
+            }
+            try {
+                String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_IMAGE_TEA, file.getPath(),
+                        IdGen.uuid() + ".jpg");
+                lessionChange.setImage(path);
+            } catch (Exception e) {
+                addMessage(redirectAttributes, "封面路径错误，请重新选择");
+                logger.error(e.getMessage(), e);
+            }
+
+        }
+        if (StringUtils.isNotBlank(lessionInfo.gettStudioUrl())
+                && !StringUtils.equals(lessionInfo.gettStudioUrl(), originLession.gettStudioUrl())) {
+            logger.info("更新教师的话（录音）");
+
+            File file = null;
+            try {
+                file = CkfinderUtils.getFileFromCkpath(lessionInfo.gettStudioUrl());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+            if (file == null) {
+                addMessage(redirectAttributes, "教师录音路径错误，请重新选择");
+                return "redirect:" + adminPath + "/operator/lession/lessionForm?id=" + lessionId;
+            }
+            try {
+                String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_IMAGE_TEA, file.getPath(),
+                        IdGen.uuid() + ".mp3");
+                lessionChange.settStudioUrl(path);
+            } catch (Exception e) {
+                addMessage(redirectAttributes, "教师录音路径错误，请重新选择");
+                logger.error(e.getMessage(), e);
+            }
+
+        }
+        if (StringUtils.isNotBlank(lessionInfo.gettContent())
+                && !StringUtils.equals(lessionInfo.gettContent(), originLession.gettContent())) {
+            logger.info("更新教师的话（文本）");
+            lessionChange.settContent(lessionInfo.gettContent());
+        }
+        int i = lessionService.modifyLession(lessionChange);
+        if (i == 1) {
+            addMessage(redirectAttributes, "修改成功");
+        }
+
+        return "redirect:" + adminPath + "/operator/lession/lessionList";
+
     }
 
     /**
@@ -183,7 +330,8 @@ public class LessionController extends BaseController {
         }
 
         try {
-            String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_STUDIO_TEA, file.getPath(), id);
+            String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_STUDIO_TEA, file.getPath(),
+                    IdGen.uuid() + ".mp3");
             lessionInfo.setExampleUrl(path);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
@@ -218,7 +366,8 @@ public class LessionController extends BaseController {
             return "redirect:" + adminPath + "/operator/lession/lessionForm";
         }
         try {
-            String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_IMAGE_TEA, file.getPath(), id);
+            String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_IMAGE_TEA, file.getPath(),
+                    IdGen.uuid() + ".jpg");
             lessionInfo.setImage(path);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
@@ -252,7 +401,8 @@ public class LessionController extends BaseController {
             return "redirect:" + adminPath + "/operator/lession/lessionForm";
         }
         try {
-            String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_STUDIO_TEA, file.getPath(), id);
+            String path = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_STUDIO_TEA, file.getPath(),
+                    IdGen.uuid() + ".mp3");
             lessionInfo.settStudioUrl(path);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);

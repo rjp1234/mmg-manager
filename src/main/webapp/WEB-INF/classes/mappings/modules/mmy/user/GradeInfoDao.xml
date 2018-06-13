@@ -4,7 +4,7 @@
     <select id="getAll" resultType="GradeInfo">
 		SELECT 
 			*
-		FROM grade_info where del_flag=#{DEL_FLAG_NORMAL}
+		FROM grade_info where del_flag=#{DEL_FLAG_NORMAL} order by name asc
 	</select>
 	
 	<select id="findList" resultType="GradeInfo">
@@ -17,7 +17,7 @@
 				and NAME=#{name} 				
 				</if>		
 		</where>
-		ORDER BY create_time
+		ORDER BY name
 	</select>
 	<insert id="insert">
 	INSERT INTO grade_info (id,name,creater,create_time,del_flag) values (#{id},#{name},#{creater},#{createTime},#{DEL_FLAG_NORMAL})

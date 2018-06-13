@@ -94,7 +94,7 @@
 			<label class="control-label">文档上传:</label>
 			<div class="controls">
 				<input type="hidden" id="excel" name="excelUrl" />
-				<sys:ckfinder input="excel" type="excel" uploadPath="/files"
+				<sys:ckfinder input="excel" type="files" uploadPath="/files"
 					selectMultiple="false" maxWidth="100" maxHeight="100" />
 			</div>
 			<br> <br>

@@ -95,7 +95,7 @@
 		$.ajax({
 			url : '${ctx}/operator/lession/lessionIssue',
 			type : 'post',
-			data : "lessionId=" + lessionId+"&classId="+classId,
+			data : "lessionId=" + lessionId + "&classId=" + classId,
 			dataType : 'json',
 			success : function(data) {
 				if (data.flag) {
@@ -109,6 +109,7 @@
 
 
 	}
+
 </script>
 <style type="text/css">
 .windowsClass {
@@ -156,8 +157,6 @@
 				<th>所属教材</th>
 				<th>单元</th>
 				<th>示范音频</th>
-				<th>创建人</th>
-				<th>创建时间</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -171,12 +170,15 @@
 					<td>${lession.textId}</td>
 					<td>第${lession.unit}单元</td>
 					<td><audio controls="controls" src="${lession.exampleUrl}"></audio></td>
-					<td>${lession.creater}</td>
-					<td>${lession.createTime}</td>
-					<td><input class="btn" type="button" value="删除"
+					<td><a class="btn"
+						href="${ctx}/operator/lession/detailsForm?id=${lession.id}">查看</a>
+						<a class="btn"
+						href="${ctx}/operator/lession/lessionForm?id=${lession.id}">编辑</a>
+						<input class="btn" type="button" value="删除"
 						onclick="delById(this,'${lession.id}')">&nbsp;<input
 						class="btn" type="button" value="下发课文"
-						onclick="alertWindow('${lession.id}','${lession.name}')">&nbsp;<a href="${ctx}/operator/lession/getClassInfoListByLession?id=${lession.id}">查看已下发班级</a></td>
+						onclick="alertWindow('${lession.id}','${lession.name}')">&nbsp;<a
+						href="${ctx}/operator/lession/getClassInfoListByLession?id=${lession.id}">查看已下发班级</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>

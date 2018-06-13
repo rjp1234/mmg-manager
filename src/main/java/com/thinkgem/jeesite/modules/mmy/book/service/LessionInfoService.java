@@ -111,4 +111,15 @@ public class LessionInfoService extends CrudService<LessionInfoDao, LessionInfo>
         return dao.delById(lession);
     }
 
+    /**
+     * 
+     * modifyLession(这里用一句话描述这个方法的作用)
+     * 
+     */
+    @Transactional(readOnly = false)
+    public int modifyLession(LessionInfo lessionChange) {
+        // TODO Auto-generated method stub
+        return dao.update(lessionChange);
+    }
+
 }

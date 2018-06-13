@@ -44,7 +44,12 @@ function changeGradeName (gradeId) {
 
 function insertGrade () {
 	var gradeName=$("#gradename").val();
-	var flag=confirm('请确认是否新增"'+gradeName+'"作为新的分组?');
+	if(gradeName==null||gradeName==''||!gradeName){
+		alertx("组名不得为空");
+		return ;
+	}
+	
+	var flag=confirm('请确认是否新增 '+gradeName+' 作为新的分组?');
 	if(!flag){
 		return;
 	}
@@ -76,7 +81,7 @@ function insertGrade () {
 					onclick="changeGradeName('${grade.id}')" type="button"
 					class="btn btn-primary"  value="更改"></td>*/
 				var index=i+1;
-				var str="<tr id='#tr"+i+"'><td>"+index+"</td><td id='gradename"+id+"'>"+name+"</td><td>"+id+"</td><td>"+creater+"</td><td>"+createTime+"</td>"+
+				var str="<tr id='#tr"+i+"'><td>"+index+"</td><td id='gradename"+id+"'>"+name+"</td><td>"+creater+"</td><td>"+createTime+"</td>"+
 				"<td><input id='name"+id+"'  class=\"input-medium\" >&nbsp;<input onclick=\"changeGradeName('"+id+"')\" type=\"button\" class=\"btn btn-primary\"  value=\"更改\"></td>"+"</tr>";
 				
 				$("#tbody").append(str);

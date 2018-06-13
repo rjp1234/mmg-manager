@@ -121,7 +121,8 @@ public class TextBookController extends BaseController {
         textBookInfo.setId(id);
         String image = null;
         try {
-            image = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_IMAGE_TEA, file.getPath(), id);
+            image = FileLoadUtils.QIniuupload(FileLoadUtils.SOURCE_TYPE_IMAGE_TEA, file.getPath(),
+                    IdGen.uuid() + ".jpg");
         } catch (UnsupportedEncodingException e) {
             addMessage(redirectAttributes, "封面上传发生异常");
             return "redirect:" + adminPath + "/operator/textbook/textBookForm";

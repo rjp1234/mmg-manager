@@ -43,6 +43,13 @@ function checkName() {
 	}
 	
 function submitCheck(){
+	var originGradeId='${classInfo.gradeId}';
+	if(originGradeId!=$("#gradeId").val()){
+		var flag=confirm('修改组名会导致该班级解除先阶段所有下发课程的绑定，请确认是否继续');
+		if(!flag){
+			return false;
+		}
+	}
 		var name=$("#className").val();
 		if(name==${classInfo.name}){
 			//名称未变更的情况下

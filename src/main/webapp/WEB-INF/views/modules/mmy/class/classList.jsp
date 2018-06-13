@@ -25,6 +25,12 @@ function doubleCheck(msg){
 	}
 	return false;
 }
+function page(n,s){
+	$("#pageNo").val(n);
+	$("#pageSize").val(s);
+	$("#searchForm").submit();
+	return false;
+}
 </script>
 <style type="text/css">
 .windowsClass {
@@ -88,7 +94,7 @@ function doubleCheck(msg){
 						href="${ctx}/operator/class/classForm?id=${classInfo.id}" type="button"
 						class="btn btn-primary" >编辑</a>&nbsp;<a
 						class="btn btn-primary"
-						onclick="return doubleCheck('请确认是否删除该班级？该班级下所有学生信息将会失去关联需要重新设置')"
+						onclick="return doubleCheck('请确认是否删除该班级？该班级下所有学生信息及课程下发记录将会一同清除')"
 						href="${ctx}/operator/class/delClassById?id=${classInfo.id}">删除</a>
 						<a href="${ctx}/operator/class/getLessionByClassId?id=${classInfo.id}">查看下发课文</a>
 						</td>

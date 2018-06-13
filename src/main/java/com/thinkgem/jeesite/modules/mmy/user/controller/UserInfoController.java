@@ -231,10 +231,15 @@ public class UserInfoController extends BaseController {
     @RequestMapping("userList")
     public String userList(HttpServletRequest request, HttpServletResponse response, Model model, UserInfo userInfo) {
         Page<UserInfo> page = new Page<UserInfo>(request, response);
-        page = userInfoService.findPage(page, userInfo);
+
         String gradeId = request.getParameter("gradeId");
         String classId = userInfo.getClassId();
-
+        userInfo.setGradeId(gradeId);
+        try {
+            page = userInfoService.findPage(page, userInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
         Map<String, GradeInfo> gradeBufferMap = new HashMap<String, GradeInfo>();
         List<GradeInfo> gradeList = gradeInfoService.getAll();
         for (GradeInfo gradeInfo : gradeList) {

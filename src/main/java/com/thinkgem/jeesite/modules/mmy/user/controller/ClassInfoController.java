@@ -151,18 +151,31 @@ public class ClassInfoController extends BaseController {
     @RequestMapping("modifyClass")
     public String modifyClassName(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
             Model model, RedirectAttributes redirectAttributes) {
-        ClassInfo cl = classService.getById(classInfo.getId());
+        ClassInfo originClass = classService.getById(classInfo.getId());
         String className1 = classInfo.getName();// 将要改变的
-        String className2 = cl.getName();// 改变之前的
+        String className2 = originClass.getName();// 改变之前的
         if (StringUtils.isNotBlank(className1) && (!className1.equals(className2))) {
             // 需要更新名称
             // 更新的名称不能在班级列表中出现
-            int i = classService.updateClassName(cl.getId(), className1);
+            int i = classService.updateClassName(originClass.getId(), className1);
             if (i < 0) {
                 addMessage(redirectAttributes, "班级名称重名");
-                return "redirect:" + adminPath + "/operator/class/classForm?id=" + cl.getId();
+                return "redirect:" + adminPath + "/operator/class/classForm?id=" + originClass.getId();
             }
         }
+
+        /**
+         * 更新组名后原课程绑定记录需清空
+         */
+        List<LessionClassBindInfo> bindList = bindService.getByClassId(originClass.getId());
+        for (LessionClassBindInfo bind : bindList) {
+            try {
+                bindService.delById(bind.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
         /**
          * 更新组名
          */
@@ -172,7 +185,7 @@ public class ClassInfoController extends BaseController {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             addMessage(redirectAttributes, "组名更新失败");
-            return "redirect:" + adminPath + "/operator/class/classForm?id=" + cl.getId();
+            return "redirect:" + adminPath + "/operator/class/classForm?id=" + originClass.getId();
         }
 
         return "redirect:" + adminPath + "/operator/class/classList";

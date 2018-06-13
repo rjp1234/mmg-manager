@@ -43,6 +43,7 @@
 					str = str + "<option value='" + data[i].id + "'>" + data[i].name + "</option>";
 				}
 				element.html(str);
+				alertx("请选择班级");
 
 			}
 		});
@@ -145,6 +146,7 @@
 				<th>昵称</th>
 				<th>所在组</th>
 				<th>所在班级</th>
+				<th>累计完成</th>
 				<th>创建人</th>
 				<th>创建日期</th>
 				<th>删除</th>
@@ -159,6 +161,7 @@
 					<td>${user.nickname}</td>
 					<td>${user.gradeId}</td>
 					<td>${user.classId}</td>
+					<td>0/0</td>
 					<td>${user.creater }</td>
 					<td>${user.createTime }</td>
 					<td><input class="btn" type="button" value="删除"
