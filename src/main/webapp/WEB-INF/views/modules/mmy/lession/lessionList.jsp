@@ -66,6 +66,7 @@
 					}
 					$("#lessionId").val(lessionId);
 					$("#issueClassList").html(str);
+					
 					$("#lessionname").html(lessionname);
 					document.getElementById("alertWindow").style.display = '';
 				} else {

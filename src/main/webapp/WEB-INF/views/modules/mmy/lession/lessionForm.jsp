@@ -6,16 +6,23 @@
 <meta name="decorator" content="default" />
 <script type="text/javascript">
 	top.$.jBox.tip.mess = null;
-	var globalFlag = false;
+	var globalFlag = true;
+
 	function submitCheck() {
 		checkLessionName(document.getElementById("name"));
 		var flag=${ lessionInfo.id==null ? true : false};
-		if(flag){
+		if(!$("#name").val()||$("#name").val().length==0){
+				alertx("课文名不得为空");
+				return false;
+		}
+		
+		//为新建
 		if (!globalFlag) {
-			alertx("课文名称不得为空");
+			alertx("课文名称有误");
 			return false;
 		}
-		}
+		
+		
 		var len = $("#content").val().length;
 		if (len == 0) {
 			alertx("课文文本内容不得为空");
@@ -61,11 +68,14 @@
 			globalFlag=false;
 			return;
 		}
-		var flag=${ lessionInfo.id==null ? false : true};
-		if(flag){
-		$("#msg").html("");
-			return;
-		}
+		var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+		console.log(pattern.test(lessionName))
+		  if(pattern.test(lessionName)){
+        	$("#msg").html("<span style='color:red'>含标点符号等特殊字符，不允许提交</span>");
+           	globalFlag=false;
+           	return;
+        }
+		
 		$.ajax({
 			url : '${ctx}/operator/lession/checkLessionName',
 			type : 'post',

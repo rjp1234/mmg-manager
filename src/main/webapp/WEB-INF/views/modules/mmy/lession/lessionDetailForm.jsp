@@ -57,6 +57,14 @@
 			globalFlag=false;
 			return;
 		}
+	 	var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+		console.log(pattern.test(lessionName))
+        if(pattern.test(lessionName)){
+        	$("#msg").html("<span style='color:red'>含标点符号等特殊字符，不允许提交</span>");
+           	globalFlag=false;
+           	return;
+        }
+		
 		$.ajax({
 			url : '${ctx}/operator/lession/checkLessionName',
 			type : 'post',
