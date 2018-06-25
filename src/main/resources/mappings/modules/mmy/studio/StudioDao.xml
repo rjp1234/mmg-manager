@@ -11,6 +11,9 @@
 			<if test="pointer !=null and pointer!=''">
 				and pointer=#{pointer}
 			</if>
+			<if test="classId !=null and classId!=''">
+				and user_id in (select id from user where class_id=#{classId})
+			</if>
 			<if test="isPointed !=null and isPointed!=''">
 				${isPointed}
 			</if>
