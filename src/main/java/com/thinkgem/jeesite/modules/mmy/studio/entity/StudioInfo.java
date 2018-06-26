@@ -43,9 +43,30 @@ public class StudioInfo extends DataEntity<StudioInfo> {
 
     private String comment;// 评语
 
+    private String classId;
+
     public static final String POINT_IS_POINTED = "1";// 已打分
 
     public static final String POINT_IS_NOT_POINTED = "0";// 未打分
+
+    /**
+     * classId
+     * 
+     * @return the classId
+     * @since CodingExample Ver(编码范例查看) 1.0
+     */
+
+    public String getClassId() {
+        return classId;
+    }
+
+    /**
+     * @param classId
+     *            the classId to set
+     */
+    public void setClassId(String classId) {
+        this.classId = classId;
+    }
 
     public String getComment() {
         return comment;

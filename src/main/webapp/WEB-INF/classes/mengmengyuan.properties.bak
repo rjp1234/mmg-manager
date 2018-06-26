@@ -13,15 +13,11 @@ domain=pa5vtka0q.bkt.clouddn.com
 #mysql database setting
 jdbc.type=mysql
 jdbc.driver=com.mysql.jdbc.Driver
-<<<<<<< HEAD
-jdbc.url=jdbc:mysql://123.207.146.145:3306/mengmengyuan?characterEncoding=utf-8
-=======
 #jdbc.url=jdbc:mysql://192.168.40.129:3306/mengmengyuan?characterEncoding=utf-8
->>>>>>> 3e232a7cd236a10ea5d3b5dc4223babd9242d82f
-#jdbc.url=jdbc:mysql://192.168.140.128:3306/mengmengyuan?characterEncoding=utf-8
+jdbc.url=jdbc:mysql://192.168.140.128:3306/mengmengyuan?characterEncoding=utf-8
 jdbc.username=root
 jdbc.password=123
-jdbc.url=jdbc:mysql://127.0.0.1:3306/mengmengyuan?characterEncoding=utf-8
+
 #mssql database settings
 #jdbc.type=mssql
 #jdbc.driver=net.sourceforge.jtds.jdbc.Driver
@@ -39,7 +35,7 @@ jdbc.testSql=SELECT 'x' FROM DUAL
 
 #redis settings
 redis.keyPrefix=jeesite
-redis.host=127.0.0.1
+redis.host=192.168.40.129
 redis.port=6379
 #zookeeper settings
 zookeeper.hostport=192.168.40.129:2181
