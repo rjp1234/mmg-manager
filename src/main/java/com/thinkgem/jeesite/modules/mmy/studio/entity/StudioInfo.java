@@ -41,6 +41,8 @@ public class StudioInfo extends DataEntity<StudioInfo> {
 
     private String isPointed;// 是否被打分及复合查询
 
+    private String searchIsPoint;
+
     private String comment;// 评语
 
     private String classId;
@@ -48,6 +50,14 @@ public class StudioInfo extends DataEntity<StudioInfo> {
     public static final String POINT_IS_POINTED = "1";// 已打分
 
     public static final String POINT_IS_NOT_POINTED = "0";// 未打分
+
+    public String getSearchIsPoint() {
+        return searchIsPoint;
+    }
+
+    public void setSearchIsPoint(String searchIsPoint) {
+        this.searchIsPoint = searchIsPoint;
+    }
 
     /**
      * classId
@@ -82,10 +92,11 @@ public class StudioInfo extends DataEntity<StudioInfo> {
 
     public void setIsPointed(String isPointed) {
         if (POINT_IS_POINTED.equals(isPointed)) {
-            this.isPointed = "and pointer is not null";
+            this.searchIsPoint = "and pointer is not null";
         } else if (POINT_IS_NOT_POINTED.equals(isPointed)) {
-            this.isPointed = "and pointer is null";
+            this.searchIsPoint = "and pointer is null";
         }
+        this.isPointed = isPointed;
 
     }
 

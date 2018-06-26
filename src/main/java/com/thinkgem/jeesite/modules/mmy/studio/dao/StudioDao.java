@@ -33,4 +33,11 @@ public interface StudioDao extends CrudDao<StudioInfo> {
      * 
      */
     public int point(StudioInfo studio);
+
+    /**
+     * 
+     * getNextUnpointStudio(按照条件获取没有批改的录音)
+     * 
+     */
+    public StudioInfo getNextUnpointStudio(StudioInfo studio);
 }

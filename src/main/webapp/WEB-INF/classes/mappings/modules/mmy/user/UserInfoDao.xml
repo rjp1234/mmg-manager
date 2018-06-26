@@ -28,7 +28,7 @@
 		order by create_time desc
 	</select>
 	<insert id="insertBatch">
-		insert into user 
+		insert into user
 		(id,
 		loginname,
 		nickname,
@@ -41,7 +41,7 @@
 		realname,
 		creater,
 		del_flag) values
-		<foreach collection="list" item="user" separator="," >
+		<foreach collection="list" item="user" separator=",">
 			(#{user.id},
 			#{user.loginname},
 			#{user.nickname},
@@ -58,13 +58,15 @@
 		</foreach>
 	</insert>
 	<select id="countByLoginname" resultType="int">
-		select count(1) from user where loginname=#{loginname} and del_flag=#{DEL_FLAG_NORMAL}
+		select count(1) from
+		user where loginname=#{loginname} and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	<update id="delById">
-		update user set del_flag=#{DEL_FLAG_DELETE} where id=#{id}
-	</update>	
-	<insert id="insert" >
-	 insert into user 
+		update user set del_flag=#{DEL_FLAG_DELETE} where
+		id=#{id}
+	</update>
+	<insert id="insert">
+		insert into user
 		(id,
 		loginname,
 		nickname,
@@ -78,19 +80,23 @@
 		creater,
 		del_flag) values
 		(#{id},
-			#{loginname},
-			#{nickname},
-			#{image},
-			#{password},
-			#{userType},
-			#{phonenum},
-			#{createTime},
-			#{classId},
-			#{realname},
-			#{creater},
-			#{DEL_FLAG_NORMAL})
+		#{loginname},
+		#{nickname},
+		#{image},
+		#{password},
+		#{userType},
+		#{phonenum},
+		#{createTime},
+		#{classId},
+		#{realname},
+		#{creater},
+		#{DEL_FLAG_NORMAL})
 	</insert>
-	<select  id="getListByClassId" resultType="UserInfo">
-		select * from user where class_id=#{classId} and del_flag=#{DEL_FLAG_NORMAL}
+	<select id="getListByClassId" resultType="UserInfo">
+		select * from user
+		where class_id=#{classId} and del_flag=#{DEL_FLAG_NORMAL}
+	</select>
+	<select id="getByRealName" resultType="UserInfo">
+		select * from user where realname =#{realname} and  del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 </mapper>

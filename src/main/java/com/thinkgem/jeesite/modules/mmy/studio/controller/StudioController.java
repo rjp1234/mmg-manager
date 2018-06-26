@@ -9,6 +9,8 @@
  */
 package com.thinkgem.jeesite.modules.mmy.studio.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.mmy.book.entity.LessionInfo;
@@ -38,6 +41,8 @@ import com.thinkgem.jeesite.modules.mmy.user.entity.UserInfo;
 import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.UserInfoService;
+import com.thinkgem.jeesite.modules.sys.entity.User;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * 
@@ -68,6 +73,9 @@ public class StudioController extends BaseController {
     @Autowired
     GradeInfoService gradeInfoService;
 
+    public static final List<String> COMMON_COMMENT = new ArrayList<String>(
+            Arrays.asList(Global.getConfig("common_comment").split(";")));
+
     @ModelAttribute
     public StudioInfo get(@RequestParam(required = false) String id) {
         if (StringUtils.isNotBlank(id)) {
@@ -97,7 +105,12 @@ public class StudioController extends BaseController {
         if (StringUtils.isBlank(studioInfo.getIsPointed())) {
             // 第一次查询，默认搜索未打分的对象
             studioInfo.setIsPointed(StudioInfo.POINT_IS_NOT_POINTED);
-
+        }
+        String searchName = studioInfo.getUserId();
+        // 返回的userId不为空，说明用户进行了名称查询，此时userID代表用户真实姓名
+        if (StringUtils.isNotBlank(studioInfo.getUserId())) {
+            UserInfo user = userService.getByRealName(studioInfo.getUserId());
+            studioInfo.setUserId(user == null ? searchName : user.getId());
         }
         Page<StudioInfo> page = new Page<StudioInfo>(request, response);
         page = studioService.getPage(page, studioInfo);
@@ -120,18 +133,24 @@ public class StudioController extends BaseController {
         // false说明当前返回的是未打分的列表
         boolean searchPoint = false;
         for (StudioInfo st : studioList) {
-            // 列表包含字段 学生名-班级-上传时间 -评分（已评分列表有 ）
-            // 获取学生姓名
-            UserInfo user = userService.getById(st.getUserId());
-            st.setUserId(user.getRealname());
-            // 获取班级名
-            st.setClassId(classMap.get(user.getClassId()).getName());
-            if (StringUtils.isNotBlank(st.getPointer())) {
-                // 当前搜索的是已打分的列表
-                searchPoint = true;
+            try {
+
+                // 列表包含字段 学生名-班级-上传时间 -评分（已评分列表有 ）
+                // 获取学生姓名
+                UserInfo user = userService.getById(st.getUserId());
+                st.setUserId(user.getRealname());
+                // 获取班级名
+                st.setClassId(classMap.get(user.getClassId()).getName());
+                if (StringUtils.isNotBlank(st.getPointer())) {
+                    // 当前搜索的是已打分的列表
+                    searchPoint = true;
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
 
         }
+        studioInfo.setUserId(searchName);
         // 搜索标记，指示搜索的是已评分还是未评分
         model.addAttribute("searchPoint", searchPoint);
         // 课文下发的年级
@@ -145,11 +164,44 @@ public class StudioController extends BaseController {
 
     }
 
-    @RequestMapping("studioForm")
+    @RequestMapping("studioPointForm")
     public String studioForm(HttpServletRequest request, HttpServletResponse response, StudioInfo studioInfo,
             RedirectAttributes redirectAttributes, Model model) {
-        return adminPath;
 
+        model.addAttribute("commonComment", COMMON_COMMENT);
+        return "modules/mmy/studio/studioPointForm";
+
+    }
+
+    @RequestMapping("studioInfoPoint")
+    public String studioInfoPoint(HttpServletRequest request, HttpServletResponse response, StudioInfo studioInfo,
+            RedirectAttributes redirectAttributes, Model model) {
+        String point = request.getParameter("point");
+        String comment = request.getParameter("comment");
+        String classId = request.getParameter("classId");
+        User user = UserUtils.getUser();
+        String pointer = user.getId();
+
+        /**
+         * 参数校验
+         */
+        if (StringUtils.isNumeric(point)) {
+            addMessage(redirectAttributes, "分数必须为整数数");
+            return "";
+        }
+        if (Integer.parseInt(point) > 10) {
+            addMessage(redirectAttributes, "分数满分为10分");
+            return "";
+        }
+        int i = studioService.pointStudio(studioInfo.getId(), comment, Integer.parseInt(point), pointer);
+        if (i == 1) {
+            addMessage(model, "批改成功");
+        } else {
+            return "";
+        }
+        studioService.getNextUnpointStudio(studioInfo.getLessionId(), classId);
+
+        return "redirect:" + adminPath + "/operator/studio/studioPointForm?id=";
     }
 
 }

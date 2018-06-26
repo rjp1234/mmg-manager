@@ -98,4 +98,18 @@ public class StudioInfoService extends CrudService<StudioDao, StudioInfo> {
 
     }
 
+    /**
+     * 
+     * getNextUnpointStudio(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    public StudioInfo getNextUnpointStudio(String lessionId, String classId) {
+        StudioInfo studio = new StudioInfo();
+        studio.setLessionId(lessionId);
+        studio.setClassId(classId);
+        return dao.getNextUnpointStudio(studio);
+
+    }
+
 }

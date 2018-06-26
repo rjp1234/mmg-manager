@@ -60,4 +60,11 @@ public interface UserInfoDao extends CrudDao<UserInfo> {
      */
     List<UserInfo> getListByClassId(UserInfo userInfo);
 
+    /**
+     * 
+     * getByRealName(这里用一句话描述这个方法的作用)
+     * 
+     */
+    UserInfo getByRealName(UserInfo userInfo);
+
 }

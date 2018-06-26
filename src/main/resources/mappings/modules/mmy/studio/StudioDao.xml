@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.thinkgem.jeesite.modules.mmy.studio.dao.StudioDao">
-	<select id="findList">
+	<select id="findList"
+		resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
 		select * from studio_info
 		<where>
 			del_flag=#{DEL_FLAG_NORMAL}
@@ -12,10 +13,14 @@
 				and pointer=#{pointer}
 			</if>
 			<if test="classId !=null and classId!=''">
-				and user_id in (select id from user where class_id=#{classId})
+				and user_id in (select id from user where
+				class_id=#{classId})
 			</if>
-			<if test="isPointed !=null and isPointed!=''">
-				${isPointed}
+			<if test="userId!=null and userId!=''">
+				and user_id = #{userId}
+			</if>
+			<if test="searchIsPoint !=null and searchIsPoint!=''">
+				${searchIsPoint}
 			</if>
 		</where>
 	</select>
@@ -23,9 +28,11 @@
 		select * from studio_info where id=#{id} and
 		del_flag=#{DEL_FLAG_NORMAL}
 	</select>
-	<select id="getByLessionIdAndUserId">
+	<select id="getByLessionIdAndUserId"
+		resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
 		select * from studio_info where
-		lession_id=#{lessionId} and user_id=#{userId} and
+		lession_id=#{lessionId} and
+		user_id=#{userId} and
 		del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	<update id="point">
@@ -35,7 +42,24 @@
 		del_flag=#{DEL_FLAG_NORMAL}
 	</update>
 	<update id="delete">
-		update studio_info set del_flag=#{DEL_FLAG_DELETE} where id=#{id}
+		update studio_info set del_flag=#{DEL_FLAG_DELETE}
+		where id=#{id}
 	</update>
+	<select id="getNextUnpointStudio" resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
+		select * from studio_info
+		<where>
+			del_flag=#{DEL_FLAG_NORMAL} and pointer is null
+			<if test="classId!=null and classId !=''">
+				and user_id in (select id from user where
+				class_id=#{classId} and
+				del_flag=#{DEL_FLAG_NORMAL})
+			</if>
+			<if test="lessionId!=null and lessionId!=''">
+				and lession_id=#{lessionId}
+			</if>
+
+		</where>
+		limit 0,1
+	</select>
 
 </mapper>

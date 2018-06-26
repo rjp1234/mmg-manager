@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +30,6 @@ import com.thinkgem.jeesite.modules.mmy.user.entity.UserInfo;
  */
 @Service
 public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
-    @Autowired
-    UserInfoDao userInfoDao;
 
     private static final Lock loginnameLock = new ReentrantLock();
 
@@ -42,12 +39,14 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
      * 
      */
     public UserInfo getById(String id) {
-        return userInfoDao.get(id);
+        UserInfo user = new UserInfo();
+        user.setId(id);
+        return dao.get(user);
     }
 
     @Transactional(readOnly = false)
     public int insertBatch(List<UserInfo> userList) {
-        return userInfoDao.insertBatch(userList);
+        return dao.insertBatch(userList);
     }
 
     public int countByLoginname(String loginname) {
@@ -56,7 +55,7 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
         loginnameLock.lock();
         int i = 0;
         try {
-            i = userInfoDao.countByLoginname(userInfo);
+            i = dao.countByLoginname(userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
@@ -75,7 +74,7 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
     public int delById(String id) {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(id);
-        return userInfoDao.delById(userInfo);
+        return dao.delById(userInfo);
 
     }
 
@@ -87,7 +86,7 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
     @Transactional(readOnly = false)
     public int insert(UserInfo userInfo) {
 
-        return userInfoDao.insert(userInfo);
+        return dao.insert(userInfo);
     }
 
     /**
@@ -100,6 +99,17 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
         UserInfo userInfo = new UserInfo();
         userInfo.setClassId(classId);
         return dao.getListByClassId(userInfo);
+    }
+
+    /**
+     * 
+     * getByRealName(根据用户真实姓名查找对应的用户列表)
+     * 
+     */
+    public UserInfo getByRealName(String realName) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setRealname(realName);
+        return dao.getByRealName(userInfo);
     }
 
 }

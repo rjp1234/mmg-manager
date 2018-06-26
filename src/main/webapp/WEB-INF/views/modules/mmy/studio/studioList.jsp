@@ -58,7 +58,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/operator/lession/lessionList">课文列表</a></li>
-		<li class="active"><a href="${ctx}/operator/studio/studioList">录音列表</a></li>
+		<li class="active"><a href="${ctx}/operator/studio/studioList?lessionId=${studioInfo.lessionId}">录音列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="studioInfo"
 		action="${ctx}/operator/studio/studioList" method="post"
@@ -66,6 +66,7 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 		<input id="pageSize" name="pageSize" type="hidden"
 			value="${page.pageSize}" />
+			<form:hidden path="lessionId"/>
 		<ul class="ul-form">
 			<li><label>学生名称：</label> <form:input path='userId'
 					htmlEscape="false" maxlength="50" class="input-medium" /></li>
@@ -113,6 +114,15 @@
 						<td>${studio.point}</td>
 						<td>${studio.comment }</td>
 					</c:if>
+					<td>
+						<c:if test="${!searchPoint}">
+							<a href="${ctx}/operator/studio/studioForm?id=${studio.id}&nextStudioId=${page.list[status.index+1].id}">批改</a>
+						</c:if>
+						<c:if test="${searchPoint}">
+							<a>修改</a>
+						</c:if>
+					
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>
