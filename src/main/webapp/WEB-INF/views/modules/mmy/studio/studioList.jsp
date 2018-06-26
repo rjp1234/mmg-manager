@@ -116,7 +116,7 @@
 					</c:if>
 					<td>
 						<c:if test="${!searchPoint}">
-							<a href="${ctx}/operator/studio/studioForm?id=${studio.id}&nextStudioId=${page.list[status.index+1].id}">批改</a>
+							<a href="${ctx}/operator/studio/studioPointForm?id=${studio.id}&classIdSearch=${studioInfo.classId}">批改</a>
 						</c:if>
 						<c:if test="${searchPoint}">
 							<a>修改</a>

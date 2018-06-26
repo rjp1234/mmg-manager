@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.config.Global;
@@ -37,6 +38,7 @@ import com.thinkgem.jeesite.modules.mmy.book.service.TextBookService;
 import com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo;
 import com.thinkgem.jeesite.modules.mmy.studio.service.StudioInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
+import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
 import com.thinkgem.jeesite.modules.mmy.user.entity.UserInfo;
 import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
@@ -79,7 +81,8 @@ public class StudioController extends BaseController {
     @ModelAttribute
     public StudioInfo get(@RequestParam(required = false) String id) {
         if (StringUtils.isNotBlank(id)) {
-            return studioService.get(id);
+            System.out.println(studioService.getById(id));
+            return studioService.getById(id);
         } else {
             return new StudioInfo();
         }
@@ -165,43 +168,55 @@ public class StudioController extends BaseController {
     }
 
     @RequestMapping("studioPointForm")
-    public String studioForm(HttpServletRequest request, HttpServletResponse response, StudioInfo studioInfo,
+    public String studioPointForm(HttpServletRequest request, HttpServletResponse response, StudioInfo studioInfo,
             RedirectAttributes redirectAttributes, Model model) {
-
+        String classIdSearch = request.getParameter("classIdSearch");
+        UserInfo userInfo = userService.getById(studioInfo.getUserId());
+        ClassInfo classInfo = classService.getById(userInfo.getClassId());
+        GradeInfo gradeInfo = gradeInfoService.getById(classInfo.getGradeId());
+        model.addAttribute("userInfo", userInfo);
+        model.addAttribute("classInfo", classInfo);
+        model.addAttribute("gradeInfo", gradeInfo);
+        model.addAttribute("classIdSearch", classIdSearch);
         model.addAttribute("commonComment", COMMON_COMMENT);
         return "modules/mmy/studio/studioPointForm";
 
     }
 
     @RequestMapping("studioInfoPoint")
-    public String studioInfoPoint(HttpServletRequest request, HttpServletResponse response, StudioInfo studioInfo,
-            RedirectAttributes redirectAttributes, Model model) {
+    @ResponseBody
+    public Map<String, Object> studioInfoPoint(HttpServletRequest request, HttpServletResponse response,
+            StudioInfo studioInfo) {
         String point = request.getParameter("point");
         String comment = request.getParameter("comment");
         String classId = request.getParameter("classId");
         User user = UserUtils.getUser();
         String pointer = user.getId();
-
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("flag", false);
+        map.put("msg", "批改失败，请联系系统管理员");
         /**
          * 参数校验
          */
         if (StringUtils.isNumeric(point)) {
-            addMessage(redirectAttributes, "分数必须为整数数");
-            return "";
+            map.put("msg", "分数必须为整数数");
+            return map;
         }
         if (Integer.parseInt(point) > 10) {
-            addMessage(redirectAttributes, "分数满分为10分");
-            return "";
+            map.put("msg", "分数满分为10分");
+            return map;
         }
         int i = studioService.pointStudio(studioInfo.getId(), comment, Integer.parseInt(point), pointer);
         if (i == 1) {
-            addMessage(model, "批改成功");
+            map.put("flag", true);
+            map.put("msg", "批改成功");
+            StudioInfo nextStudio = studioService.getNextUnpointStudio(studioInfo.getLessionId(), classId);
+            map.put("nextStudio", nextStudio);
+            return map;
         } else {
-            return "";
+            return map;
         }
-        studioService.getNextUnpointStudio(studioInfo.getLessionId(), classId);
 
-        return "redirect:" + adminPath + "/operator/studio/studioPointForm?id=";
     }
 
 }
