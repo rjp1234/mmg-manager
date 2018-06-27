@@ -178,7 +178,7 @@ public class StudioController extends BaseController {
         model.addAttribute("classInfo", classInfo);
         model.addAttribute("gradeInfo", gradeInfo);
         model.addAttribute("classIdSearch", classIdSearch);
-        model.addAttribute("com monComment", COMMON_COMMENT);
+        model.addAttribute("commonComment", COMMON_COMMENT);
         return "modules/mmy/studio/studioPointForm";
 
     }

@@ -7,7 +7,7 @@
  * 版权所有    
  *    
  */
-package com.thinkgem.jeesite.modules.mmy.book.controller;
+package com.thinkgem.jeesite.modules.mmy.operation.lession.controller;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
  */
 @Controller
 @RequestMapping("${adminPath}/operator/lessionOperation")
-public class LessionOperationController extends BaseController {
+public class LessionClassOperationController extends BaseController {
     @Autowired
     LessionInfoService lessionService;
 
