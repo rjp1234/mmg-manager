@@ -7,7 +7,7 @@
  * 版权所有    
  *    
  */
-package com.thinkgem.jeesite.modules.mmy.studio.service;
+package com.thinkgem.jeesite.modules.mmy.operation.studio.service;
 
 import java.util.List;
 
@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.service.CrudService;
 import com.thinkgem.jeesite.common.utils.TimeUtils;
-import com.thinkgem.jeesite.modules.mmy.studio.dao.StudioDao;
-import com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo;
+import com.thinkgem.jeesite.modules.mmy.operation.studio.dao.StudioDao;
+import com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo;
 
 /**
  * 
@@ -83,7 +83,7 @@ public class StudioInfoService extends CrudService<StudioDao, StudioInfo> {
         StudioInfo studio = new StudioInfo();
         studio.setId(studioId);
         studio.setComment(comment);
-        studio.setPoint(point);
+        studio.setPoint(String.valueOf(point));
         studio.setPointer(pointer);
         studio.setPointTime(TimeUtils.formateNowDay2());
         return dao.point(studio);

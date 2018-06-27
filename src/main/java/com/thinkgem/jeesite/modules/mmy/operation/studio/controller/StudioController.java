@@ -7,7 +7,7 @@
  * 版权所有    
  *    
  */
-package com.thinkgem.jeesite.modules.mmy.studio.controller;
+package com.thinkgem.jeesite.modules.mmy.operation.studio.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,8 +35,8 @@ import com.thinkgem.jeesite.modules.mmy.book.entity.LessionInfo;
 import com.thinkgem.jeesite.modules.mmy.book.entity.TextBookInfo;
 import com.thinkgem.jeesite.modules.mmy.book.service.LessionInfoService;
 import com.thinkgem.jeesite.modules.mmy.book.service.TextBookService;
-import com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo;
-import com.thinkgem.jeesite.modules.mmy.studio.service.StudioInfoService;
+import com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo;
+import com.thinkgem.jeesite.modules.mmy.operation.studio.service.StudioInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
 import com.thinkgem.jeesite.modules.mmy.user.entity.GradeInfo;
 import com.thinkgem.jeesite.modules.mmy.user.entity.UserInfo;
@@ -178,7 +178,7 @@ public class StudioController extends BaseController {
         model.addAttribute("classInfo", classInfo);
         model.addAttribute("gradeInfo", gradeInfo);
         model.addAttribute("classIdSearch", classIdSearch);
-        model.addAttribute("commonComment", COMMON_COMMENT);
+        model.addAttribute("com monComment", COMMON_COMMENT);
         return "modules/mmy/studio/studioPointForm";
 
     }
@@ -198,7 +198,7 @@ public class StudioController extends BaseController {
         /**
          * 参数校验
          */
-        if (StringUtils.isNumeric(point)) {
+        if (!StringUtils.isNumeric(point)) {
             map.put("msg", "分数必须为整数数");
             return map;
         }
@@ -209,8 +209,16 @@ public class StudioController extends BaseController {
         int i = studioService.pointStudio(studioInfo.getId(), comment, Integer.parseInt(point), pointer);
         if (i == 1) {
             map.put("flag", true);
-            map.put("msg", "批改成功");
+            map.put("msg", "批改成功,切换下一个");
             StudioInfo nextStudio = studioService.getNextUnpointStudio(studioInfo.getLessionId(), classId);
+            if (nextStudio == null) {
+                map.put("msg", "已批改完当前分组，请返回列表继续查找待批改录音记录");
+
+                return map;
+            }
+            UserInfo nextUser = userService.getById(nextStudio.getUserId());
+            nextStudio.setUserId(nextUser.getRealname());
+            nextStudio.setClassId(classService.getById(nextUser.getClassId()).getName());
             map.put("nextStudio", nextStudio);
             return map;
         } else {

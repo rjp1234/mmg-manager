@@ -7,7 +7,7 @@
  * 版权所有    
  *    
  */
-package com.thinkgem.jeesite.modules.mmy.studio.entity;
+package com.thinkgem.jeesite.modules.mmy.operation.studio.entity;
 
 import com.thinkgem.jeesite.common.persistence.DataEntity;
 
@@ -31,7 +31,7 @@ public class StudioInfo extends DataEntity<StudioInfo> {
 
     private String lessionId;// 课程id
 
-    private int point;// 分数十位
+    private String point;// 分数十位
 
     private String pointer;// 打分人
 
@@ -132,11 +132,11 @@ public class StudioInfo extends DataEntity<StudioInfo> {
         this.lessionId = lessionId;
     }
 
-    public int getPoint() {
+    public String getPoint() {
         return point;
     }
 
-    public void setPoint(int point) {
+    public void setPoint(String point) {
         this.point = point;
     }
 

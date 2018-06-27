@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<title>教材信息</title>
+<title>录音信息</title>
 <meta name="decorator" content="default" />
 <script type="text/javascript">
 	top.$.jBox.tip.mess = null;
@@ -20,18 +20,38 @@
 		var commentSelect = $("#commentSelect").val();
 		$("#comment").html(commentSelect);
 	}
-	function point(){
+	function pointSubmit() {
 		$.ajax({
-		url : '${ctx}/operator/studio/studioInfoPoint',
-		type : 'post',
-		data : "id=" + ${studioInfo.id} +"&point="+$("#point").val()+"&comment="+$("#comment").val()+"&classId="+${classIdSearch},
-		dataType : 'json',
-		success : function(data) {
-		}
-	});
-	
+			url : '${ctx}/operator/studio/studioInfoPoint',
+			type : 'post',
+			data : "id=" + $("#id").val() + "&point=" + $("#point").val() + "&comment=" + $("#comment").val() + "&classId=${classIdSearch}",
+			dataType : 'json',
+			success : function(data) {
+				console.log(data);
+				if (data.flag) {
+					var studio = data.nextStudio;
+					//成功
+					if (studio) {
+						$("#id").val(studio.id);
+						$("#userName").html(studio.userId);
+						$("#className").html(studio.classId);
+						$("#createTime").html(studio.createTime);
+						$("#studioUrl").html(studio.url);
+						$("#point").val('');
+					} else {
+						$("#userName").html("");
+						$("#className").html("");
+						$("#createTime").html("");
+						$("#studioUrl").html("");
+						$("#point").val('');
+					}
+				}
+				alertx(data.msg);
+
+			}
+		});
+
 	}
-	
 </script>
 <script type="text/javascript"
 	src="${ctxStatic}/jquery/jquery-1.9.1.min.js"></script>
@@ -54,23 +74,23 @@
 	<form:form id="inputForm" modelAttribute="studioInfo" method="post"
 		class="form-horizontal">
 		<sys:message content="${message}" />
-		<form:hidden path="id" />
+		<input type="hidden" id="id" value="${studioInfo.id}" />
 		<div class="control-group">
 			<label class="control-label">学生名:</label>
-			<div class="controls">${userInfo.realname}</div>
+			<div id="userName" class="controls">${userInfo.realname}</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label">班级:</label>
-			<div class="controls">${classInfo.name}</div>
+			<div id="className" class="controls">${classInfo.name}</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">组别:</label>
-			<div class="controls">${gradeInfo.name}</div>
+			<div id="gradeName" class="controls">${gradeInfo.name}</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">完成时间:</label>
-			<div class="controls">${studioInfo.createTime}</div>
+			<div id="createTime" class="controls">${studioInfo.createTime}</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">录音:</label>
@@ -108,8 +128,8 @@
 			</div>
 		</div>
 		<div class="form-actions">
-			<input id="btnSubmit" class="btn btn-primary" type="submit"
-				onclick="return submitCheck();" value="保 存" />
+			<input id="btnSubmit" class="btn btn-primary" type="button"
+				onclick="pointSubmit();" value="保 存" />
 		</div>
 	</form:form>
 </body>

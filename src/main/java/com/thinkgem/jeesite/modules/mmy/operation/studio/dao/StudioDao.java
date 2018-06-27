@@ -7,13 +7,13 @@
  * 版权所有    
  *    
  */
-package com.thinkgem.jeesite.modules.mmy.studio.dao;
+package com.thinkgem.jeesite.modules.mmy.operation.studio.dao;
 
 import java.util.List;
 
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
-import com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo;
+import com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo;
 
 /**
  * 

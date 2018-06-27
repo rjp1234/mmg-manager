@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.thinkgem.jeesite.modules.mmy.studio.dao.StudioDao">
+<mapper namespace="com.thinkgem.jeesite.modules.mmy.operation.studio.dao.StudioDao">
 	<select id="findList"
-		resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
+		resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info
 		<where>
 			del_flag=#{DEL_FLAG_NORMAL}
@@ -24,12 +24,12 @@
 			</if>
 		</where>
 	</select>
-	<select id="get"  resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
+	<select id="get"  resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info where id=#{id} and
 		del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	<select id="getByLessionIdAndUserId"
-		resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
+		resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info where
 		lession_id=#{lessionId} and
 		user_id=#{userId} and
@@ -45,10 +45,10 @@
 		update studio_info set del_flag=#{DEL_FLAG_DELETE}
 		where id=#{id}
 	</update>
-	<select id="getNextUnpointStudio" resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
+	<select id="getNextUnpointStudio" resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info
 		<where>
-			del_flag=#{DEL_FLAG_NORMAL} and pointer is null
+			del_flag=#{DEL_FLAG_NORMAL} and  pointer is null 
 			<if test="classId!=null and classId !=''">
 				and user_id in (select id from user where
 				class_id=#{classId} and
@@ -57,9 +57,9 @@
 			<if test="lessionId!=null and lessionId!=''">
 				and lession_id=#{lessionId}
 			</if>
-
+	
 		</where>
-		limit 0,1
-	</select>
+		limit 1;
+		</select>
 
 </mapper>
