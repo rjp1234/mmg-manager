@@ -24,7 +24,7 @@
 			</if>
 		</where>
 	</select>
-	<select id="get">
+	<select id="get"  resultType="com.thinkgem.jeesite.modules.mmy.studio.entity.StudioInfo">
 		select * from studio_info where id=#{id} and
 		del_flag=#{DEL_FLAG_NORMAL}
 	</select>

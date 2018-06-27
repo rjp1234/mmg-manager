@@ -112,4 +112,15 @@ public class StudioInfoService extends CrudService<StudioDao, StudioInfo> {
 
     }
 
+    /**
+     * 
+     * getById(这里用一句话描述这个方法的作用)
+     * 
+     */
+    public StudioInfo getById(String id) {
+        StudioInfo studio = new StudioInfo();
+        studio.setId(id);
+        return dao.get(studio);
+    }
+
 }

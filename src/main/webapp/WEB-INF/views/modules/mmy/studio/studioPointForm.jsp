@@ -9,90 +9,104 @@
 	function submitCheck() {
 		return false;
 	}
+	function checkPoint(e) {
+		var value = e.value;
+		console.log(value);
+		if (value > 10) {
+			e.value = 10;
+		}
+	}
+	function selectComment() {
+		var commentSelect = $("#commentSelect").val();
+		$("#comment").html(commentSelect);
+	}
+	function point(){
+		$.ajax({
+		url : '${ctx}/operator/studio/studioInfoPoint',
+		type : 'post',
+		data : "id=" + ${studioInfo.id} +"&point="+$("#point").val()+"&comment="+$("#comment").val()+"&classId="+${classIdSearch},
+		dataType : 'json',
+		success : function(data) {
+		}
+	});
+	
+	}
+	
 </script>
+<script type="text/javascript"
+	src="${ctxStatic}/jquery/jquery-1.9.1.min.js"></script>
+<script type="text/javascript"
+	src="${ctxStatic}/bootstrap/2.3.1/table/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="${ctxStatic}/bootstrap/2.3.1/table/bootstrap-table.js"></script>
+<script type="text/javascript"
+	src="${ctxStatic}/bootstrap/2.3.1/table/bootstrap-table-zh-CN.js"></script>
+<link href="${ctxStatic}/bootstrap/2.3.1/table/bootstrap-table.css"
+	type="text/css" rel="stylesheet">
 </head>
 <body>
 	<ul class="nav nav-tabs">
-			<li ><a href="${ctx}/operator/studio/studioList?lessionId=${studioInfo.lessionId}">录音列表</a></li>
+		<li><a
+			href="${ctx}/operator/studio/studioList?lessionId=${studioInfo.lessionId}">录音列表</a></li>
 		<li class="active"><a
-			href="${ctx}/operator/studio/studioPointForm?id= ${studioInfo.id}">录音批改</a></li>
+			href="${ctx}/operator/studio/studioPointForm?id= ${studioInfo.id}&classIdSearch=${classIdSearch}">录音批改</a></li>
 	</ul>
-	<br />
-	<form:form id="inputForm" modelAttribute="lessionInfo"
-		method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="studioInfo" method="post"
+		class="form-horizontal">
 		<sys:message content="${message}" />
 		<form:hidden path="id" />
 		<div class="control-group">
 			<label class="control-label">学生名:</label>
-			<div class="controls">
-				<form:input id="name" path="name" htmlEscape="false" maxlength="50"
-					oninput="checkLessionName(this)" />
-				&nbsp;&nbsp;<span id="msg"></span>
-			</div>
+			<div class="controls">${userInfo.realname}</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">教材:</label>
+			<label class="control-label">班级:</label>
+			<div class="controls">${classInfo.name}</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">组别:</label>
+			<div class="controls">${gradeInfo.name}</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">完成时间:</label>
+			<div class="controls">${studioInfo.createTime}</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">录音:</label>
 			<div class="controls">
-				<form:select style="width: 20%" onchange="textChange(this)"
-					path="textId" id="textId">
-					<option value="">请选择</option>
-					<c:forEach items="${textList}" var='text'>
-						<form:option value="${text.id}">${text.name}</form:option>
+				<audio id="studioUrl" controls="controls" src="${studioInfo.url}"></audio>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">评分:</label>
+			<div class="controls">
+				<input class="input-medium" id="point"
+					onKeyUp="value=value.replace(/[^\d]/g,'')"
+					oninput="checkPoint(this);">
+
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">评语模版</label>
+			<div class="controls">
+				<select id="commentSelect" style="width:40%;"
+					onchange="selectComment();">
+					<option value="">自定义</option>
+					<c:forEach items="${commonComment}" var="comment"
+						varStatus="status">
+						<option value="${comment}">${status.index+1}、${comment}</option>
 					</c:forEach>
-				</form:select>
+				</select>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">单元:</label>
+			<label class="control-label">评语:</label>
 			<div class="controls">
-				<form:select path="unit" style="width:20%" id="unit">
-					<form:option value='0'>请选择</form:option>
-				</form:select>
+				<textarea class="input-medium" style="width:200px; height: 100px"
+					maxlength="140" id="comment"></textarea>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">课文封面:</label>
-			<div class="controls">
-				<form:input type="hidden" id="imageUrl" path="image" />
-				<sys:ckfinder input="imageUrl" type="images" uploadPath="/files"
-					selectMultiple="false" maxWidth="100" maxHeight="100" />
-			</div>
-			<br> <br>
-		</div>
-		<div class="control-group">
-			<label class="control-label">示范录音:</label>
-			<div class="controls">
-				<form:input type="hidden" path="exampleUrl" id="exampleUrl" />
-				<sys:ckfinder input="exampleUrl" type="studio" uploadPath="/files"
-					selectMultiple="false" maxWidth="100" maxHeight="100" />
-			</div>
-			<br> <br>
-		</div>
-		<div class="control-group">
-			<label class="control-label">教师的话（录音）:</label>
-			<div class="controls">
-				<form:input type="hidden" path="tStudioUrl" id="tStudioUrl" />
-				<sys:ckfinder input="tStudioUrl" type="studio" uploadPath="/files"
-					selectMultiple="false" maxWidth="100" maxHeight="100" />
-			</div>
-			<br> <br>
-		</div>
-		<div class="control-group">
-			<label class="control-label">教师的话（文本）:</label>
-			<div class="controls">
-				<form:textarea style="width:600px" path="tContent"
-					htmlEscape="false" rows="3" class="input-xlarge" />
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">课文内容:</label>
-			<div class="controls">
-				<form:textarea style="width:600px;" path="content" id="content"
-					htmlEscape="false" rows="3" class="input-xlarge" />
-			</div>
-		</div>
-
 		<div class="form-actions">
 			<input id="btnSubmit" class="btn btn-primary" type="submit"
 				onclick="return submitCheck();" value="保 存" />
