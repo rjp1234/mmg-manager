@@ -21,6 +21,6 @@ import com.thinkgem.jeesite.modules.mmy.operation.lession.entity.LessionClassOpe
  * @version
  * 
  */
-public class LessionOperationService extends CrudService<LessionClassOperationDao, LessionClassOperationInfo> {
+public class LessionClassOperationService extends CrudService<LessionClassOperationDao, LessionClassOperationInfo> {
 
 }

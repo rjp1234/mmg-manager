@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.mmy.book.dao.LessionClassBindDao">
+	<select id="findList" resultType="LessionClassOperationInfo">
+		select name ,id from class_info clazz  where del_flag=#{DEL_FLAG_NORMAL} join lession_class_bind lcbind on  
+	</select>
+</mapper>
