@@ -9,6 +9,8 @@
  */
 package com.thinkgem.jeesite.modules.mmy.operation.lession.service;
 
+import org.springframework.stereotype.Service;
+
 import com.thinkgem.jeesite.common.service.CrudService;
 import com.thinkgem.jeesite.modules.mmy.operation.lession.dao.LessionClassOperationDao;
 import com.thinkgem.jeesite.modules.mmy.operation.lession.entity.LessionClassOperationInfo;
@@ -21,6 +23,7 @@ import com.thinkgem.jeesite.modules.mmy.operation.lession.entity.LessionClassOpe
  * @version
  * 
  */
+@Service
 public class LessionClassOperationService extends CrudService<LessionClassOperationDao, LessionClassOperationInfo> {
 
 }

@@ -10,6 +10,7 @@
 package com.thinkgem.jeesite.modules.mmy.operation.lession.dao;
 
 import com.thinkgem.jeesite.common.persistence.CrudDao;
+import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.mmy.operation.lession.entity.LessionClassOperationInfo;
 
 /**
@@ -20,6 +21,7 @@ import com.thinkgem.jeesite.modules.mmy.operation.lession.entity.LessionClassOpe
  * @version
  * 
  */
+@MyBatisDao
 public interface LessionClassOperationDao extends CrudDao<LessionClassOperationInfo> {
 
 }

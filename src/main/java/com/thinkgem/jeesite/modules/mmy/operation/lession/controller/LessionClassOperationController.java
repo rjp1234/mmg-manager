@@ -80,11 +80,11 @@ public class LessionClassOperationController extends BaseController {
         page = lessionClassOperationService.findPage(page, lessionClassOperationInfo);
         List<TextBookInfo> textList = textBookService.getAll();
         for (LessionClassOperationInfo lessionClass : page.getList()) {
-
+            System.out.println(lessionClass);
         }
         model.addAttribute("page", page);
         model.addAttribute("textList", textList);
-        return adminPath;
+        return "modules/mmy/lession/lessionClassOperationList";
 
     }
 
