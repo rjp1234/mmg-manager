@@ -101,6 +101,11 @@ public class StudioController extends BaseController {
     public String studioList(HttpServletRequest request, HttpServletResponse response, StudioInfo studioInfo,
             RedirectAttributes redirectAttributes, Model model) {
         String lessionId = request.getParameter("lessionId");
+        String classId = request.getParameter("classId");
+        if (StringUtils.isBlank(classId) && StringUtils.isBlank(studioInfo.getClassId())) {
+            studioInfo.setClassId(classId);
+        }
+
         // 根据课文的id获取其下录音列表
         if (StringUtils.isNotBlank(lessionId)) {
             studioInfo.setLessionId(lessionId);

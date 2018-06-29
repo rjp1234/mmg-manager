@@ -57,8 +57,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/operator/lession/lessionList">课文列表</a></li>
-		<li class="active"><a href="${ctx}/operator/studio/studioList?lessionId=${studioInfo.lessionId}">录音列表</a></li>
+	<li><a href="${ctx}/operator/lessionOperation/lessionList">课文列表</a></li>
+		<li class="active"><a href="${ctx}/operator/studio/studioList?lessionId=${studioInfo.lessionId}&classId=${studioInfo.classId}">录音列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="studioInfo"
 		action="${ctx}/operator/studio/studioList" method="post"

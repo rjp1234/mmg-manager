@@ -37,11 +37,21 @@ public class LessionClassOperationInfo extends DataEntity<LessionClassOperationI
 
     private int pointedNum;// 被打分过的录音总数
 
+    private String gradeName;// 组名
+
     private int numA;// A优秀人数
 
     private int numP;// P良好人数
 
     private int numE;// E不合格人数
+
+    public String getGradeName() {
+        return gradeName;
+    }
+
+    public void setGradeName(String gradeName) {
+        this.gradeName = gradeName;
+    }
 
     /**
      * lessionId
