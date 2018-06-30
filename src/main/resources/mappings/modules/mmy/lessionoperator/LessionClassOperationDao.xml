@@ -1,40 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.thinkgem.jeesite.modules.mmy.operation.lession.dao.LessionClassOperationDao">
+<mapper
+	namespace="com.thinkgem.jeesite.modules.mmy.operation.lession.dao.LessionClassOperationDao">
 	<select id="findList" resultType="LessionClassOperationInfo">
 		SELECT
 		gi.name as grade_name,
 		ci.NAME as class_name,
-		li.name as lession_name,
+		li.name as
+		lession_name,
 		ci.id as class_id,
 		lcb.create_time,
-		lcb.lession_id as lession_id,
-		(select count(1) from user where class_id=lcb.class_id and del_flag=#{DEL_FLAG_NORMAL}) as
+		lcb.lession_id as
+		lession_id,
+		(select count(1) from user where class_id=lcb.class_id and
+		del_flag=#{DEL_FLAG_NORMAL}) as
 		total_num,
-		(select count(1) from studio_info where lession_id=lcb.lession_id and
+		(select count(1) from
+		studio_info where lession_id=lcb.lession_id and
 		del_flag=#{DEL_FLAG_NORMAL} and user_id in (select id from user where
-		class_id=lcb.class_id and del_flag=#{DEL_FLAG_NORMAL})) as complete_num,
-		(select count(1) from studio_info where lession_id=lcb.lession_id and
-		del_flag=#{DEL_FLAG_NORMAL} and pointer is not null and user_id in (select id from
-		user where class_id=lcb.class_id and del_flag=#{DEL_FLAG_NORMAL})) as pointed_num,
+		class_id=lcb.class_id and del_flag=#{DEL_FLAG_NORMAL})) as
+		complete_num,
+		(select count(1) from studio_info where
+		lession_id=lcb.lession_id and
+		del_flag=#{DEL_FLAG_NORMAL} and pointer
+		is not null and user_id in (select id from
+		user where
+		class_id=lcb.class_id and del_flag=#{DEL_FLAG_NORMAL})) as
+		pointed_num,
 
-		(select count(1) from studio_info where lession_id=lcb.lession_id and
-		del_flag=#{DEL_FLAG_NORMAL} and pointer is not null and point &gt;=8 and point &lt;= 10 and
-		user_id in (select id from user where class_id=lcb.class_id and
+		(select count(1) from studio_info where
+		lession_id=lcb.lession_id and
+		del_flag=#{DEL_FLAG_NORMAL} and pointer
+		is not null and point &gt;=8 and point &lt;= 10 and
+		user_id in (select
+		id from user where class_id=lcb.class_id and
 		del_flag=#{DEL_FLAG_NORMAL})) as num_a,
-		(select count(1) from studio_info where lession_id=lcb.lession_id and
-		del_flag=#{DEL_FLAG_NORMAL} and pointer is not null and point &gt;=4 and point &lt;= 7 and
-		user_id in (select id from user where class_id=lcb.class_id and
+		(select count(1) from
+		studio_info where lession_id=lcb.lession_id and
+		del_flag=#{DEL_FLAG_NORMAL} and pointer is not null and point &gt;=4
+		and point &lt;= 7 and
+		user_id in (select id from user where
+		class_id=lcb.class_id and
 		del_flag=#{DEL_FLAG_NORMAL})) as num_p,
 		(select count(1) from studio_info where lession_id=lcb.lession_id and
-		del_flag=#{DEL_FLAG_NORMAL} and pointer is not null and point &gt;=0 and point &lt;= 3 and
-		user_id in (select id from user where class_id=lcb.class_id and
+		del_flag=#{DEL_FLAG_NORMAL} and pointer is not null and point &gt;=0
+		and point &lt;= 3 and
+		user_id in (select id from user where
+		class_id=lcb.class_id and
 		del_flag=#{DEL_FLAG_NORMAL})) as num_e
 		FROM
 		lession_class_bind lcb
-		JOIN class_info ci ON lcb.class_id = ci.id and lcb.del_flag=#{DEL_FLAG_NORMAL} JOIN lession_info li on li.id=lcb.lession_id
-		JOIN grade_info gi on gi.id=ci.id 
-		 order by
+		JOIN class_info ci ON lcb.class_id = ci.id and
+		lcb.del_flag=#{DEL_FLAG_NORMAL} JOIN lession_info li on
+		li.id=lcb.lession_id and li.del_flag=#{DEL_FLAG_NORMAL}
+		JOIN grade_info gi on gi.id=ci.grade_id
+		<where>
+			li.del_flag=#{DEL_FLAG_NORMAL}
+			<if test="lessionName !=null and lessionName !=''">
+				and li.name like concat('%',#{lessionName},'%')
+			</if>
+			<if test="classId!=null and classId!=''">
+				and ci.id=#{classId}
+			</if>
+		</where>
+		order by
 		lession_id,ci.name
 	</select>
 </mapper>

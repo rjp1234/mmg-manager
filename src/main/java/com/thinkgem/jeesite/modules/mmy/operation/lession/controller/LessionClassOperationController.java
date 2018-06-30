@@ -23,12 +23,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.mmy.book.entity.TextBookInfo;
 import com.thinkgem.jeesite.modules.mmy.book.service.LessionClassBindService;
 import com.thinkgem.jeesite.modules.mmy.book.service.LessionInfoService;
 import com.thinkgem.jeesite.modules.mmy.book.service.TextBookService;
 import com.thinkgem.jeesite.modules.mmy.operation.lession.entity.LessionClassOperationInfo;
 import com.thinkgem.jeesite.modules.mmy.operation.lession.service.LessionClassOperationService;
+import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
 import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
 
@@ -76,14 +76,12 @@ public class LessionClassOperationController extends BaseController {
     @RequestMapping("lessionList")
     public String lessionList(HttpServletRequest request, HttpServletResponse response,
             LessionClassOperationInfo lessionClassOperationInfo, RedirectAttributes redirectAttributes, Model model) {
+        System.out.println(lessionClassOperationInfo);
         Page<LessionClassOperationInfo> page = new Page<LessionClassOperationInfo>(request, response);
         page = lessionClassOperationService.findPage(page, lessionClassOperationInfo);
-        List<TextBookInfo> textList = textBookService.getAll();
-        for (LessionClassOperationInfo lessionClass : page.getList()) {
-            System.out.println(lessionClass);
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("textList", textList);
+        List<ClassInfo> all = classService.getAll();
+        model.addAttribute("classList", all);
+        model.addAttribute(page);
         return "modules/mmy/lession/lessionClassOperationList";
 
     }

@@ -23,6 +23,7 @@
 				${searchIsPoint}
 			</if>
 		</where>
+		order by point desc ,create_time asc
 	</select>
 	<select id="get"  resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info where id=#{id} and

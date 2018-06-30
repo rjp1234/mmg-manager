@@ -143,10 +143,8 @@
 				<th style="width:10px">序号</th>
 				<th>学生名称</th>
 				<th>登录名</th>
-				<th>昵称</th>
 				<th>所在组</th>
 				<th>所在班级</th>
-				<th>累计完成</th>
 				<th>创建人</th>
 				<th>创建日期</th>
 				<th>删除</th>
@@ -158,10 +156,8 @@
 					<td>${status.index+1 }</td>
 					<td>${user.realname}</td>
 					<td>${user.loginname}</td>
-					<td>${user.nickname}</td>
 					<td>${user.gradeId}</td>
 					<td>${user.classId}</td>
-					<td>0/0</td>
 					<td>${user.creater }</td>
 					<td>${user.createTime }</td>
 					<td><input class="btn" type="button" value="删除"

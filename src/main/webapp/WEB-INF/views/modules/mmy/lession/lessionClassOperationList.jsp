@@ -46,12 +46,13 @@
 		<input id="pageSize" name="pageSize" type="hidden"
 			value="${page.pageSize}" />
 		<ul class="ul-form">
-			<li><label>课文名称：</label> <form:input path='className'
+			<li><label>课文名称：</label> <form:input path='lessionName'
 					htmlEscape="false" maxlength="50" class="input-medium" /></li>
-			<li><label>班级名称：</label> <form:select path='lessionName'
+			<li><label>班级名称：</label> <form:select path='classId'
 					htmlEscape="false" maxlength="50" class="input-medium">
-					<c:forEach items="${textList}" var='text'>
-						<form:option value="${text.id}">${text.name}</form:option>
+				<form:option value=''>请选择</form:option>
+					<c:forEach items="${classList}" var='cla'>
+						<form:option value="${cla.id}">${cla.name}</form:option>
 					</c:forEach>
 				</form:select></li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary"
@@ -79,7 +80,7 @@
 					<td>${status.index+1 }</td>
 					<td>${lession.lessionName}</td>
 					<td>${lession.className}</td>
-					<td></td>
+					<td>${lession.gradeName}</td>
 					<td>${lession.completeNum}/${lession.totalNum}</td>
 					<td>${lession.completeNum-lession.pointedNum }</td>
 					<td>
@@ -89,7 +90,7 @@
 					</td>
 					<td>
 						<a href="${ctx}/operator/studio/studioList?lessionId=${lession.lessionId}&classId=${lession.classId}">点击批改</a>
-					</td>
+					&nbsp;<a href="${ctx}/operator/studio/studioList?lessionId=${lession.lessionId}&classId=${lession.classId}&isPointed=1">查看已评分列表</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>

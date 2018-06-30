@@ -79,7 +79,6 @@
 			<label class="control-label">学生名:</label>
 			<div id="userName" class="controls">${userInfo.realname}</div>
 		</div>
-
 		<div class="control-group">
 			<label class="control-label">班级:</label>
 			<div id="className" class="controls">${classInfo.name}</div>
