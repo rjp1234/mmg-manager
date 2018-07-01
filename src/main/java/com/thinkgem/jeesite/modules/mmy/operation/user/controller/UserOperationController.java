@@ -12,6 +12,7 @@ package com.thinkgem.jeesite.modules.mmy.operation.user.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,8 +22,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
+import com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo;
+import com.thinkgem.jeesite.modules.mmy.operation.studio.service.StudioInfoService;
 import com.thinkgem.jeesite.modules.mmy.operation.user.entity.UserOperationInfo;
 import com.thinkgem.jeesite.modules.mmy.operation.user.service.UserOperationService;
+import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 
 /**
  * 
@@ -38,9 +42,20 @@ public class UserOperationController extends BaseController {
     @Autowired
     UserOperationService userOperationService;
 
+    @Autowired
+    ClassInfoService classService;
+
+    @Autowired
+    StudioInfoService studioService;
+
     @ModelAttribute
-    public UserOperationInfo get() {
+    public UserOperationInfo getUserOperationInfo() {
         return new UserOperationInfo();
+    }
+
+    @ModelAttribute
+    public StudioInfo getStudioInfo() {
+        return new StudioInfo();
     }
 
     @RequestMapping("userList")
@@ -48,8 +63,34 @@ public class UserOperationController extends BaseController {
             RedirectAttributes redirectAttributes, UserOperationInfo userOperationInfo) {
         Page<UserOperationInfo> page = new Page<UserOperationInfo>(request, response);
         userOperationService.findPage(page, userOperationInfo);
+        model.addAttribute("classList", classService.getAll());
         model.addAttribute(page);
-        return adminPath;
+        model.addAttribute("userOperationInfo", userOperationInfo);
+        return "modules/mmy/user/userOperationList";
+    }
+
+    @RequestMapping("userStudioList")
+    public String userStudioList(HttpServletRequest request, HttpServletResponse response, Model model,
+            RedirectAttributes redirectAttributes, UserOperationInfo userOperationInfo) {
+        String userId = request.getParameter("userId");
+        String classId = request.getParameter("classId");
+        String userName = request.getParameter("userName");
+        if (StringUtils.isNotBlank(classId)) {
+            model.addAttribute("classId", classId);
+        }
+
+        if (StringUtils.isNotBlank(userName)) {
+            model.addAttribute("userName", userName);
+        }
+
+        Page<StudioInfo> page = new Page<StudioInfo>(request, response);
+        StudioInfo studioInfo = new StudioInfo();
+        studioInfo.setUserId(userId);
+        page = studioService.getUserStudioListPage(page, studioInfo);
+        model.addAttribute(page);
+        model.addAttribute("userId", userId);
+        return "modules/mmy/studio/userOperationStudioList";
+
     }
 
 }

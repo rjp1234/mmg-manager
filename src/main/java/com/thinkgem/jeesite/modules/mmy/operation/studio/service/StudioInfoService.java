@@ -123,4 +123,16 @@ public class StudioInfoService extends CrudService<StudioDao, StudioInfo> {
         return dao.get(studio);
     }
 
+    /**
+     * 
+     * getUserStudioListPage(根据用户id获取其录音列表，按照提交时间降序排序）
+     * 
+     */
+    public Page<StudioInfo> getUserStudioListPage(Page<StudioInfo> page, StudioInfo studioInfo) {
+        studioInfo.setPage(page);
+        page.setList(dao.findList2(studioInfo));
+        return page;
+
+    }
+
 }

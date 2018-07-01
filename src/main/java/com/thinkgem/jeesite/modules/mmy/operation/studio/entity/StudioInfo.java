@@ -31,6 +31,8 @@ public class StudioInfo extends DataEntity<StudioInfo> {
 
     private String lessionId;// 课程id
 
+    private String lessionName;
+
     private String point;// 分数十位
 
     private String pointer;// 打分人
@@ -50,6 +52,25 @@ public class StudioInfo extends DataEntity<StudioInfo> {
     public static final String POINT_IS_POINTED = "1";// 已打分
 
     public static final String POINT_IS_NOT_POINTED = "0";// 未打分
+
+    /**
+     * lessionName
+     * 
+     * @return the lessionName
+     * @since CodingExample Ver(编码范例查看) 1.0
+     */
+
+    public String getLessionName() {
+        return lessionName;
+    }
+
+    /**
+     * @param lessionName
+     *            the lessionName to set
+     */
+    public void setLessionName(String lessionName) {
+        this.lessionName = lessionName;
+    }
 
     public String getSearchIsPoint() {
         return searchIsPoint;

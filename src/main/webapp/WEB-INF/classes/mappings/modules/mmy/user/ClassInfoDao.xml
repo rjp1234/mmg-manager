@@ -54,7 +54,7 @@
 		where id=#{id} and del_flag=#{delFlag}
 	</update>
 	<select id="getAll" resultType="ClassInfo">
-		select * from class_info where del_flag='0'
+		select * from class_info ci where del_flag='0' order by (select name from grade_info where id=ci.id  and del_flag='0'),ci.name
 	</select>
 	<select id="countByGradeId" resultType="int">
 		select count(1) from class_info where grade_id=#{gradeId} and del_flag=#{DEL_FLAG_NORMAL}

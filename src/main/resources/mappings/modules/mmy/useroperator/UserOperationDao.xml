@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="UserOperationDao">
+<mapper
+	namespace="com.thinkgem.jeesite.modules.mmy.operation.user.dao.UserOperationDao">
 	<select id="findList" resultType="UserOperationInfo">
 		SELECT
-		u.realname,
-		ci.NAME,
+		u.id as user_id,
+		u.realname as user_name,
+		ci.id as class_id,
+		ci.NAME as class_name,
 		(
 		SELECT
 		count(1)
@@ -13,7 +16,7 @@
 		WHERE
 		del_flag = #{DEL_FLAG_NORMAL}
 		AND class_id = ci.id
-		),
+		) as total_work,
 		(
 		SELECT
 		count(1)
@@ -21,7 +24,8 @@
 		studio_info
 		WHERE
 		del_flag = #{DEL_FLAG_NORMAL}
-		AND user_id = u.id
+		AND
+		user_id = u.id
 		AND lession_id IN (
 		SELECT
 		lession_id
@@ -29,9 +33,10 @@
 		lession_class_bind
 		WHERE
 		del_flag = #{DEL_FLAG_NORMAL}
-		AND class_id = ci.id
+		AND class_id =
+		ci.id
 		)
-		),
+		) as compelte_work,
 		(
 		SELECT
 		count(1)
@@ -44,13 +49,16 @@
 		FROM
 		lession_class_bind
 		WHERE
-		class_id = ci.id
+		class_id =
+		ci.id
 		AND del_flag = #{DEL_FLAG_NORMAL}
 		)
-		AND del_flag = #{DEL_FLAG_NORMAL}
+		AND del_flag =
+		#{DEL_FLAG_NORMAL}
 		AND pointer IS NOT NULL
 		AND point &gt;= 8
-		AND point &lt;= 10
+		AND point
+		&lt;= 10
 		AND user_id = u.id
 		) AS num_a,
 		(
@@ -68,10 +76,12 @@
 		class_id = ci.id
 		AND del_flag = #{DEL_FLAG_NORMAL}
 		)
-		AND del_flag = #{DEL_FLAG_NORMAL}
+		AND del_flag =
+		#{DEL_FLAG_NORMAL}
 		AND pointer IS NOT NULL
 		AND point &gt;= 4
-		AND point &lt;= 7
+		AND point
+		&lt;= 7
 		AND user_id = u.id
 		) AS num_p,
 		(
@@ -89,30 +99,26 @@
 		class_id = ci.id
 		AND del_flag = #{DEL_FLAG_NORMAL}
 		)
-		AND del_flag = #{DEL_FLAG_NORMAL}
+		AND del_flag =
+		#{DEL_FLAG_NORMAL}
 		AND pointer IS NOT NULL
 		AND point &gt;= 0
-		AND point &lt;= 3
+		AND point
+		&lt;= 3
 		AND user_id = u.id
-		) AS num_e,
-		(
-		SELECT
-		avg(point)
-		FROM
-		studio_info
-		WHERE
-		user_id = u.id
-		AND del_flag = #{DEL_FLAG_NORMAL}
-		AND pointer IS NOT NULL
-		),
+		) AS num_e, ( IFNULL((SELECT avg( point )
+		FROM studio_info WHERE user_id = u.id AND del_flag = #{DEL_FLAG_NORMAL} AND pointer
+		IS NOT NULL),0 ) )AS avg,
 		(
 		SELECT
 		count(1)
 		FROM
 		`user` u2
 		WHERE
-		class_id = ci.id
-		AND del_flag = #{DEL_FLAG_NORMAL}
+		class_id =
+		ci.id
+		AND
+		del_flag = #{DEL_FLAG_NORMAL}
 		AND (
 		SELECT
 		avg(point)
@@ -121,20 +127,12 @@
 		WHERE
 		user_id = u2.id
 		AND del_flag = #{DEL_FLAG_NORMAL}
-		AND pointer IS NOT NULL
-		) &gt; (
-		(
-		SELECT
-		avg(point)
-		FROM
-		studio_info
-		WHERE
-		user_id = u.id
-		AND del_flag = #{DEL_FLAG_NORMAL}
-		AND pointer IS NOT NULL
-		)
-		)
-		),
+		AND
+		pointer IS
+		NOT NULL
+		) &gt; avg
+		) as
+		ranking,
 		(
 		SELECT
 		count(1)
@@ -142,21 +140,25 @@
 		`user`
 		WHERE
 		class_id = ci.id
-		AND del_flag = #{DEL_FLAG_NORMAL}
-		)
+		AND del_flag =
+		#{DEL_FLAG_NORMAL}
+		) as
+		classuser_num
 		FROM
 		`user` u
-		JOIN class_info ci ON ci.id = u.class_id
+		JOIN class_info ci ON
+		ci.id = u.class_id
 		<where>
-		u.del_flag = #{DEL_FLAG_NORMAL}
-		AND ci.del_flag = #{DEL_FLAG_NORMAL} 
-	<if test="userName !=null and userName !=''">
-			AND 	u.realname like concat('%' , #{userName},'%')
-		</if>		
-		<if test="className !=null and className !=''">
-		AND	 ci.NAME = #{className}
-		</if>
+			u.del_flag = #{DEL_FLAG_NORMAL}
+			AND ci.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="userName !=null and userName !=''">
+				AND u.realname like concat('%' , #{userName},'%')
+			</if>
+			<if test="classId !=null and classId !=''">
+				AND ci.id = #{classId}
+			</if>
 		</where>
-		
+		order by
+		avg desc,total_work
 	</select>
 </mapper>

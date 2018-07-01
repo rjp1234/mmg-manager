@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.thinkgem.jeesite.modules.mmy.operation.studio.dao.StudioDao">
+<mapper
+	namespace="com.thinkgem.jeesite.modules.mmy.operation.studio.dao.StudioDao">
 	<select id="findList"
 		resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info
@@ -25,7 +26,14 @@
 		</where>
 		order by point desc ,create_time asc
 	</select>
-	<select id="get"  resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
+	<select id="findList2"
+		resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
+		select si.*,li.name as lession_name from studio_info si join lession_info li on li.id=si.lession_id
+		where si.del_flag=#{DEL_FLAG_NORMAL} AND si.user_id=#{userId} AND pointer is not null
+		order by create_time desc
+	</select>
+	<select id="get"
+		resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info where id=#{id} and
 		del_flag=#{DEL_FLAG_NORMAL}
 	</select>
@@ -46,10 +54,11 @@
 		update studio_info set del_flag=#{DEL_FLAG_DELETE}
 		where id=#{id}
 	</update>
-	<select id="getNextUnpointStudio" resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
+	<select id="getNextUnpointStudio"
+		resultType="com.thinkgem.jeesite.modules.mmy.operation.studio.entity.StudioInfo">
 		select * from studio_info
 		<where>
-			del_flag=#{DEL_FLAG_NORMAL} and  pointer is null 
+			del_flag=#{DEL_FLAG_NORMAL} and pointer is null
 			<if test="classId!=null and classId !=''">
 				and user_id in (select id from user where
 				class_id=#{classId} and
@@ -58,9 +67,9 @@
 			<if test="lessionId!=null and lessionId!=''">
 				and lession_id=#{lessionId}
 			</if>
-	
+
 		</where>
 		limit 1;
-		</select>
+	</select>
 
 </mapper>

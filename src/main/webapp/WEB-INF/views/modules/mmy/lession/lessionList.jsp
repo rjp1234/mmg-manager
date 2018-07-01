@@ -178,8 +178,7 @@
 						onclick="delById(this,'${lession.id}')">&nbsp;<input
 						class="btn" type="button" value="下发课文"
 						onclick="alertWindow('${lession.id}','${lession.name}')">&nbsp;<a
-						href="${ctx}/operator/lession/getClassInfoListByLession?id=${lession.id}">查看已下发班级</a>&nbsp;<a
-						href="${ctx}/operator/studio/studioList?lessionId=${lession.id}">批改录音</a></td>
+						href="${ctx}/operator/lession/getClassInfoListByLession?id=${lession.id}">查看已下发班级</a></td>
 
 				</tr>
 			</c:forEach>

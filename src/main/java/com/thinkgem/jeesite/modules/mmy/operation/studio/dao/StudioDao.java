@@ -40,4 +40,12 @@ public interface StudioDao extends CrudDao<StudioInfo> {
      * 
      */
     public StudioInfo getNextUnpointStudio(StudioInfo studio);
+
+    /**
+     * 
+     * findList2(这里用一句话描述这个方法的作用)
+     * 
+     * 
+     */
+    public List<StudioInfo> findList2(StudioInfo studio);
 }
