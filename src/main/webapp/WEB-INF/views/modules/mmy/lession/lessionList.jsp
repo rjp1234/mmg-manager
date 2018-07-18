@@ -138,6 +138,7 @@
 					htmlEscape="false" maxlength="50" class="input-medium" /></li>
 			<li><label>教材名称：</label> <form:select path='textId'
 					htmlEscape="false" maxlength="50" class="input-medium">
+					<form:option value="">请选择</form:option>
 					<c:forEach items="${textList}" var='text'>
 						<form:option value="${text.id}">${text.name}</form:option>
 					</c:forEach>

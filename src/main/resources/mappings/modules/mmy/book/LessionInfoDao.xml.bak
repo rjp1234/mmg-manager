@@ -52,7 +52,7 @@
 				and text_id=#{textId}
 			</if>
 		</where>
-		order by create_time desc
+		order by create_time
 	</select>
 	<select id="countByName" resultType="int">
 		select count(1) from
