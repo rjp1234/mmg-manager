@@ -153,6 +153,10 @@ public class LessionController extends BaseController {
         lessionChange.setId(lessionId);
         TextBookInfo text = textBookService.getById(lessionInfo.getTextId());
         LessionInfo originLession = lessionService.getById(lessionId);
+        if (originLession == null) {
+            addMessage(redirectAttributes, "课文不存在，无法修改");
+            return "redirect:" + adminPath + "/operator/lession/lessionForm?id=" + lessionId;
+        }
         if (StringUtils.isNotBlank(lessionInfo.getName())
                 && !StringUtils.equals(lessionInfo.getName(), originLession.getName())) {
             logger.info("名称更新");
