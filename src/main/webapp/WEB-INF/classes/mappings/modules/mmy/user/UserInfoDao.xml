@@ -8,7 +8,7 @@
 	<select id="findList" resultType="UserInfo">
 		select * from user
 		<where>
-			del_flag=#{DEL_FLAG_NORMAL}
+			del_flag=#{DEL_FLAG_NORMAL} and creater=#{creater}
 			<if test="phonenum !=null and phonenum!=''">
 				and phonenum=#{phonenum}
 			</if>
@@ -42,7 +42,8 @@
 		creater,
 		del_flag) values
 		<foreach collection="list" item="user" separator=",">
-			(#{user.id},
+			(
+			#{user.id},
 			#{user.loginname},
 			#{user.nickname},
 			#{user.image},
@@ -78,8 +79,8 @@
 		class_id,
 		realname,
 		creater,
-		del_flag) values
-		(#{id},
+		del_flag) select
+		#{id},
 		#{loginname},
 		#{nickname},
 		#{image},
@@ -90,13 +91,17 @@
 		#{classId},
 		#{realname},
 		#{creater},
-		#{DEL_FLAG_NORMAL})
+		#{DEL_FLAG_NORMAL} from dual where not exists(
+		select id
+		from user where loginname=#{loginname} and del_flag=#{DEL_FLAG_NORMAL}
+		)
 	</insert>
 	<select id="getListByClassId" resultType="UserInfo">
 		select * from user
 		where class_id=#{classId} and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	<select id="getByRealName" resultType="UserInfo">
-		select * from user where realname =#{realname} and  del_flag=#{DEL_FLAG_NORMAL}
+		select * from user where
+		realname =#{realname} and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 </mapper>

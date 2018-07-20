@@ -1,40 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.thinkgem.jeesite.modules.mmy.user.dao.GradeInfoDao">
-    <select id="getAll" resultType="GradeInfo">
-		SELECT 
-			*
-		FROM grade_info where del_flag=#{DEL_FLAG_NORMAL} order by name asc
+	<select id="getAll" resultType="GradeInfo">
+		SELECT
+		*
+		FROM grade_info where
+		del_flag=#{DEL_FLAG_NORMAL} and creater=#{creater} order by name asc
 	</select>
-	
+
 	<select id="findList" resultType="GradeInfo">
-		SELECT 
-			*
+		SELECT
+		*
 		FROM grade_info
 		<where>
-		del_flag=#{DEL_FLAG_NORMAL}
-				<if test="name!=null and name!=''">
-				and NAME=#{name} 				
-				</if>		
+			del_flag=#{DEL_FLAG_NORMAL} AND creater=#{creater}
+			<if test="name!=null and name!=''">
+				and NAME=#{name}
+			</if>
 		</where>
 		ORDER BY name
 	</select>
 	<insert id="insert">
-	INSERT INTO grade_info (id,name,creater,create_time,del_flag) values (#{id},#{name},#{creater},#{createTime},#{DEL_FLAG_NORMAL})
+		INSERT INTO grade_info
+		(id,name,creater,create_time,del_flag) SELECT
+		#{id},#{name},#{creater},#{createTime},#{DEL_FLAG_NORMAL} FROM dual
+		where not exists (select name from grade_info
+		where name =#{name} and
+		creater=#{creater} and
+		del_flag=#{DEL_FLAG_NORMAL})
 	</insert>
 	<select id="countByName" resultType="int">
-		select count(1) from grade_info where name=#{name} and del_flag=#{DEL_FLAG_NORMAL}
+		select count(1) from
+		grade_info where name=#{name} and del_flag=#{DEL_FLAG_NORMAL} and
+		creater=#{creater}
 	</select>
 	<update id="delById">
-		UPDATE grade_info SET del_flag=#{DEL_FLAG_DELETE}  WHERE id=#{id} 
+		UPDATE grade_info SET del_flag=#{DEL_FLAG_DELETE}
+		WHERE id=#{id}
 	</update>
 	<select id="get" resultType="GradeInfo">
-		select * from grade_info where id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
+		select * from grade_info where
+		id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 	<update id="updateName">
-		UPDATE grade_info SET name=#{name} where id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
+		UPDATE grade_info SET name=#{name} where id=#{id} and
+		del_flag=#{DEL_FLAG_NORMAL} and 0=( select a.count from (select
+		count(1) as count from grade_info
+		where del_flag=#{DEL_FLAG_NORMAL} and
+		name=#{name} and creater=#{creater}) as a)
 	</update>
-<select id="getByClassId" resultType="GradeInfo">
-	select * from grade_info where id=(select grade_id from  class_info where id=#{classId} and del_flag ='0') and del_flag='0'
-</select>
+	<select id="getByClassId" resultType="GradeInfo">
+		select * from grade_info
+		where id=(select grade_id from class_info where
+		id=#{classId} and
+		del_flag ='0') and del_flag='0'
+	</select>
 </mapper>

@@ -10,8 +10,6 @@
 package com.thinkgem.jeesite.modules.mmy.user.service;
 
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,8 +36,6 @@ import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
     @Autowired
     ClassInfoDao classDao;
-
-    private static Lock lock = new ReentrantLock();
 
     /**
      * 
@@ -86,27 +82,17 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
      */
     @Transactional(readOnly = false)
     public int createClass(GradeInfo grade, String classname) {
-        lock.lock();
-        int i = 0;
-        // 将班级插入数据库
-        try {
-            ClassInfo classInfo = new ClassInfo();
-            classInfo.setId(IdGen.uuid());
-            classInfo.setGradeId(grade.getId());
-            classInfo.setName(classname);
-            classInfo.setCreateTime(TimeUtils.formateNowDay2());
-            classInfo.setCreater(UserUtils.getUser().getId());
-            i = countByClassName(classname);
-            if (i > 0) {
-                return -1;
-            }
-            i = classDao.insert(classInfo);
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            lock.unlock();
+        ClassInfo classInfo = new ClassInfo();
+        classInfo.setId(IdGen.uuid());
+        classInfo.setGradeId(grade.getId());
+        classInfo.setName(classname);
+        classInfo.setCreateTime(TimeUtils.formateNowDay2());
+        classInfo.setCreater(UserUtils.getUser().getId());
+        if (countByClassName(classname) > 0) {
+            return -1;
         }
+        int i = classDao.insert(classInfo);
+
         return i;
     }
 
@@ -117,23 +103,15 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
      */
     @Transactional(readOnly = false)
     public int updateClassName(String id, String className) {
-        lock.lock();
         ClassInfo classInfo = new ClassInfo();
         classInfo.setId(id);
         classInfo.setName(className);
-        int i = 0;
-        try {
-
-            i = countByClassName(className);
-            if (i > 0) {
-                return -1;
-            }
-            i = classDao.updateClassName(classInfo);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            lock.unlock();
+        classInfo.setCreater(UserUtils.getUser().getId());
+        if (countByClassName(className) > 0) {
+            return -1;
         }
+
+        int i = classDao.updateClassName(classInfo);
         return i;
     }
 
@@ -142,9 +120,10 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
      * countByClassName(计算某名称的班级数)
      * 
      */
-    public synchronized int countByClassName(String className) {
+    public int countByClassName(String className) {
         ClassInfo classInfo = new ClassInfo();
         classInfo.setName(className);
+        classInfo.setCreater(UserUtils.getUser().getId());
         return classDao.countByClassName(classInfo);
     }
 
@@ -183,8 +162,9 @@ public class ClassInfoService extends CrudService<ClassInfoDao, ClassInfo> {
      * 
      */
     public List<ClassInfo> getAll() {
-        // TODO Auto-generated method stub
-        return classDao.getAll();
+        ClassInfo classInfo = new ClassInfo();
+        classInfo.setCreater(UserUtils.getUser().getId());
+        return classDao.getAll(classInfo);
     }
 
     /**

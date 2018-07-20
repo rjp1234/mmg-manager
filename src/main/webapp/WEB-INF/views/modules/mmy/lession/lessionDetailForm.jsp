@@ -117,7 +117,7 @@
 			<label class="control-label">课文名称:</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="50"
-					oninput="checkLessionName(this)" readonly="true"/>	<input class='btn' value="查看学生完成情况" onclick="alertx('当前没有完成信息')">
+					oninput="checkLessionName(this)" readonly="true"/>	
 			</div>
 		</div>
 		

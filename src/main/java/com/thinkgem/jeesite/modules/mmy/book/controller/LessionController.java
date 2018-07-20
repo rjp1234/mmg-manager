@@ -96,6 +96,7 @@ public class LessionController extends BaseController {
             RedirectAttributes redirectAttributes, Model model) {
         List<TextBookInfo> textList = textBookService.getAll();
         Page<LessionInfo> page = new Page<LessionInfo>(request, response);
+        lessionInfo.setCreater(UserUtils.getUser().getId());
         page = lessionService.findPage(page, lessionInfo);
         for (LessionInfo lession : page.getList()) {
             try {

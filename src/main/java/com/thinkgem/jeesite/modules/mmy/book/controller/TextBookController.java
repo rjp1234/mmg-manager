@@ -156,6 +156,7 @@ public class TextBookController extends BaseController {
     public String textBookList(HttpServletRequest request, HttpServletResponse response, TextBookInfo textBookInfo,
             RedirectAttributes redirectAttributes, Model model) {
         Page<TextBookInfo> page = new Page<TextBookInfo>(request, response);
+        textBookInfo.setCreater(UserUtils.getUser().getId());
         page = textBookService.findPage(page, textBookInfo);
         List<TextBookInfo> textList = page.getList();
         for (TextBookInfo text : textList) {

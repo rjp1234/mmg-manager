@@ -149,7 +149,7 @@
 		JOIN class_info ci ON
 		ci.id = u.class_id
 		<where>
-			u.del_flag = #{DEL_FLAG_NORMAL}
+			u.del_flag = #{DEL_FLAG_NORMAL} and creater=#{creater}
 			AND ci.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="userName !=null and userName !=''">
 				AND u.realname like concat('%' , #{userName},'%')

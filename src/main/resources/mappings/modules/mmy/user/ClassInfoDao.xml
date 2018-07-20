@@ -4,7 +4,8 @@
 	<select id="get" resultType="ClassInfo">
 		SELECT
 		*
-		FROM class_info where id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
+		FROM class_info where
+		id=#{id} and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 
 	<select id="getByGradeId" resultType="ClassInfo">
@@ -17,20 +18,29 @@
 				and grade_id=#{gradeId}
 			</if>
 		</where>
-		ORDER BY name 
+		ORDER BY name
 	</select>
 	<select id="countByClassName" resultType="int">
 		select count(1) from
-		class_info where name=#{name} and del_flag=#{DEL_FLAG_NORMAL}
+		class_info where name=#{name} and del_flag=#{DEL_FLAG_NORMAL} and
+		creater=#{creater}
 	</select>
 	<insert id="insert">
 		INSERT INTO class_info
-		(id,name,creater,create_time,del_flag,grade_id) values
-		(#{id},#{name},#{creater},#{createTime},#{DEL_FLAG_NORMAL},#{gradeId})
+		(id,name,creater,create_time,del_flag,grade_id) select
+		#{id},#{name},#{creater},#{createTime},#{DEL_FLAG_NORMAL},#{gradeId}
+		from dual where not exists(
+		select name from class_info where name=#{name} and creater=#{creater} and
+		del_flag=#{DEL_FLAG_NORMAL}
+		)
 	</insert>
 	<update id="updateClassName">
 		update class_info set name=#{name} where id=#{id} and
-		del_flag=#{delFlag}
+		del_flag=#{delFlag} and 0=( select a.count from (select
+		count(1) as
+		count from class_info
+		where del_flag=#{DEL_FLAG_NORMAL} and
+		name=#{name} and creater=#{creater}) as a)
 	</update>
 	<update id="delById">
 		update class_info set del_flag=#{DEL_FLAG_DELETE}
@@ -39,7 +49,7 @@
 	<select id="findList" resultType="ClassInfo">
 		select * from class_info c
 		<where>
-			del_flag=#{DEL_FLAG_NORMAL}
+			del_flag=#{DEL_FLAG_NORMAL} and creater=#{creater}
 			<if test="name!=null and name!=''">
 				and name=#{name}
 			</if>
@@ -50,14 +60,19 @@
 		ORDER BY (select name from grade_info g where g.id=c.grade_id),name
 	</select>
 	<update id="updateGradeId">
-		update class_info set grade_id=(select id from grade_info where id=#{gradeId} and del_flag=#{delFlag})
-		where id=#{id} and del_flag=#{delFlag}
+		update class_info set grade_id=(select id from
+		grade_info where id=#{gradeId} and del_flag=#{delFlag})
+		where id=#{id}
+		and del_flag=#{delFlag}
 	</update>
 	<select id="getAll" resultType="ClassInfo">
-		select * from class_info ci where del_flag='0' order by (select name from grade_info where id=ci.id  and del_flag='0'),ci.name
+		select * from class_info ci where
+		del_flag=#{DEL_FLAG_NORMAL} AND creater=#{creater} order by (select
+		name from grade_info where id=ci.id and del_flag='0'),ci.name
 	</select>
 	<select id="countByGradeId" resultType="int">
-		select count(1) from class_info where grade_id=#{gradeId} and del_flag=#{DEL_FLAG_NORMAL}
+		select count(1) from
+		class_info where grade_id=#{gradeId} and del_flag=#{DEL_FLAG_NORMAL}
 	</select>
 
 </mapper>

@@ -67,6 +67,7 @@ public class GradeInfoController extends BaseController {
         GradeInfo gradeInfo = new GradeInfo();
         String name = request.getParameter("name");
         gradeInfo.setName(name);
+        gradeInfo.setCreater(UserUtils.getUser().getId());
         page = gradeInfoService.findList(gradeInfo, page);
 
         List<GradeInfo> list = page.getList();

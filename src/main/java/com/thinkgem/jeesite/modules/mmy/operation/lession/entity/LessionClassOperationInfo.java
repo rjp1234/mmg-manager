@@ -45,6 +45,27 @@ public class LessionClassOperationInfo extends DataEntity<LessionClassOperationI
 
     private int numE;// E不合格人数
 
+    private String creater;
+
+    /**
+     * creater
+     * 
+     * @return the creater
+     * @since CodingExample Ver(编码范例查看) 1.0
+     */
+
+    public String getCreater() {
+        return creater;
+    }
+
+    /**
+     * @param creater
+     *            the creater to set
+     */
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
     public String getGradeName() {
         return gradeName;
     }

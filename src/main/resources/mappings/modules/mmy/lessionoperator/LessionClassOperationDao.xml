@@ -55,7 +55,7 @@
 		li.id=lcb.lession_id and li.del_flag=#{DEL_FLAG_NORMAL}
 		JOIN grade_info gi on gi.id=ci.grade_id
 		<where>
-			li.del_flag=#{DEL_FLAG_NORMAL}
+			li.del_flag=#{DEL_FLAG_NORMAL} and li.creater=#{creater}
 			<if test="lessionName !=null and lessionName !=''">
 				and li.name like concat('%',#{lessionName},'%')
 			</if>

@@ -31,6 +31,7 @@ import com.thinkgem.jeesite.modules.mmy.operation.lession.service.LessionClassOp
 import com.thinkgem.jeesite.modules.mmy.user.entity.ClassInfo;
 import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
 import com.thinkgem.jeesite.modules.mmy.user.service.GradeInfoService;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * 
@@ -78,6 +79,7 @@ public class LessionClassOperationController extends BaseController {
             LessionClassOperationInfo lessionClassOperationInfo, RedirectAttributes redirectAttributes, Model model) {
         System.out.println(lessionClassOperationInfo);
         Page<LessionClassOperationInfo> page = new Page<LessionClassOperationInfo>(request, response);
+        lessionClassOperationInfo.setCreater(UserUtils.getUser().getId());
         page = lessionClassOperationService.findPage(page, lessionClassOperationInfo);
         List<ClassInfo> all = classService.getAll();
         model.addAttribute("classList", all);

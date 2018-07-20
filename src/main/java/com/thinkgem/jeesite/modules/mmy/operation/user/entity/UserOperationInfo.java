@@ -52,6 +52,27 @@ public class UserOperationInfo extends DataEntity<UserOperationInfo> {
 
     private int ranking;// 平均分排名（平均评定分高于该学生的总数）
 
+    private String creater;
+
+    /**
+     * creater
+     * 
+     * @return the creater
+     * @since CodingExample Ver(编码范例查看) 1.0
+     */
+
+    public String getCreater() {
+        return creater;
+    }
+
+    /**
+     * @param creater
+     *            the creater to set
+     */
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
     /**
      * userName
      * 

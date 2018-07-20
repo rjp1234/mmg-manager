@@ -154,10 +154,12 @@ public class UserInfoController extends BaseController {
         // 删除校验不通过的用户
         userList.removeAll(errorUserList);
         int count = 0;
-        try {
-            count = userInfoService.insertBatch(userList);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+        if (userList.size() > 0) {
+            try {
+                count = userInfoService.insertBatch(userList);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
         String errorMsg = "";
         if (errorUserList.size() > 0) {
@@ -235,6 +237,7 @@ public class UserInfoController extends BaseController {
         String gradeId = request.getParameter("gradeId");
         String classId = userInfo.getClassId();
         userInfo.setGradeId(gradeId);
+        userInfo.setCreater(UserUtils.getUser().getId());
         try {
             page = userInfoService.findPage(page, userInfo);
         } catch (Exception e) {

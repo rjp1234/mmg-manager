@@ -202,6 +202,7 @@ public class ClassInfoController extends BaseController {
     public String classList(HttpServletRequest request, HttpServletResponse response, ClassInfo classInfo,
             Model model) {
         Page<ClassInfo> page = new Page<ClassInfo>(request, response);
+        classInfo.setCreater(UserUtils.getUser().getId());
         page = classService.findPage(page, classInfo);
         List<ClassInfo> classList = page.getList();
         for (ClassInfo cl : classList) {

@@ -15,7 +15,7 @@
 		del_flag,
 		unit_num,
 		grade_id
-		)values(
+		) select
 		#{id},
 		#{name},
 		#{image},
@@ -24,12 +24,15 @@
 		#{DEL_FLAG_NORMAL},
 		#{unitNum},
 		#{gradeId}
+		from dual where not exists(
+		select name from text_book_info where name=#{name} and
+		del_flag=#{DEL_FLAG_NORMAL} and creater=#{creater}
 		)
 	</insert>
 	<select id="findList" resultType="TextBookInfo">
 		select * from text_book_info
 		<where>
-			del_flag=#{DEL_FLAG_NORMAL}
+			del_flag=#{DEL_FLAG_NORMAL} and creater=#{creater}
 			<if test="name !=null and name !=''">
 				and name=#{name}
 			</if>
@@ -39,13 +42,14 @@
 	<select id="countByName" resultType="int">
 		select count(1) from
 		text_book_info where name = #{name} and
-		del_flag=#{DEL_FLAG_NORMAL}
-
+		del_flag=#{DEL_FLAG_NORMAL} and
+		creater=#{creater}
 	</select>
 	<update id="delById">
-	update text_book_info set del_flag=#{DEL_FLAG_DELETE} where id=#{id}
+		update text_book_info set del_flag=#{DEL_FLAG_DELETE} where id=#{id}
 	</update>
 	<select id="getAll" resultType="TextBookInfo">
-		select * from text_book_info where del_flag=#{DEL_FLAG_NORMAL}
+		select * from text_book_info
+		where del_flag=#{DEL_FLAG_NORMAL} and creater=#{creater}
 	</select>
 </mapper>

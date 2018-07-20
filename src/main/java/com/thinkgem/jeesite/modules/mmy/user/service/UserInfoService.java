@@ -46,7 +46,16 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
 
     @Transactional(readOnly = false)
     public int insertBatch(List<UserInfo> userList) {
-        return dao.insertBatch(userList);
+        loginnameLock.lock();
+        try {
+            return dao.insertBatch(userList);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            loginnameLock.unlock();
+
+        }
+        return 0;
     }
 
     public int countByLoginname(String loginname) {
@@ -85,8 +94,17 @@ public class UserInfoService extends CrudService<UserInfoDao, UserInfo> {
      */
     @Transactional(readOnly = false)
     public int insert(UserInfo userInfo) {
+        loginnameLock.lock();
+        int i = 0;
+        try {
+            i = dao.insert(userInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            loginnameLock.unlock();
 
-        return dao.insert(userInfo);
+        }
+        return i;
     }
 
     /**

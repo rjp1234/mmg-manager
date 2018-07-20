@@ -27,6 +27,7 @@ import com.thinkgem.jeesite.modules.mmy.operation.studio.service.StudioInfoServi
 import com.thinkgem.jeesite.modules.mmy.operation.user.entity.UserOperationInfo;
 import com.thinkgem.jeesite.modules.mmy.operation.user.service.UserOperationService;
 import com.thinkgem.jeesite.modules.mmy.user.service.ClassInfoService;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * 
@@ -62,6 +63,7 @@ public class UserOperationController extends BaseController {
     public String userList(HttpServletRequest request, HttpServletResponse response, Model model,
             RedirectAttributes redirectAttributes, UserOperationInfo userOperationInfo) {
         Page<UserOperationInfo> page = new Page<UserOperationInfo>(request, response);
+        userOperationInfo.setCreater(UserUtils.getUser().getId());
         userOperationService.findPage(page, userOperationInfo);
         model.addAttribute("classList", classService.getAll());
         model.addAttribute(page);

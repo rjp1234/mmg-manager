@@ -69,8 +69,10 @@ public interface ClassInfoDao extends CrudDao<ClassInfo> {
      * 
      * getAll(这里用一句话描述这个方法的作用)
      * 
+     * @param classInfo
+     * 
      */
-    public List<ClassInfo> getAll();
+    public List<ClassInfo> getAll(ClassInfo classInfo);
 
     /**
      * 

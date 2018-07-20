@@ -23,6 +23,7 @@ import com.thinkgem.jeesite.common.service.CrudService;
 import com.thinkgem.jeesite.modules.mmy.book.dao.TextBookDao;
 import com.thinkgem.jeesite.modules.mmy.book.entity.TextBookInfo;
 import com.thinkgem.jeesite.modules.mmy.book.entity.UnitInfo;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * 
@@ -43,7 +44,8 @@ public class TextBookService extends CrudService<TextBookDao, TextBookInfo> {
      * 
      */
     @Transactional(readOnly = false)
-    public synchronized int insertTextBook(TextBookInfo book) {
+    public int insertTextBook(TextBookInfo book) {
+        book.setCreater(UserUtils.getUser().getId());
         if (countByName(book.getName()) > 0) {
             return -1;
         }
@@ -101,7 +103,7 @@ public class TextBookService extends CrudService<TextBookDao, TextBookInfo> {
     public int countByName(String name) {
         TextBookInfo textBookInfo = new TextBookInfo();
         textBookInfo.setName(name);
-
+        textBookInfo.setCreater(UserUtils.getUser().getId());
         return textBookDao.countByName(textBookInfo);
     }
 
@@ -124,7 +126,9 @@ public class TextBookService extends CrudService<TextBookDao, TextBookInfo> {
      * 
      */
     public List<TextBookInfo> getAll() {
-        return dao.getAll(new TextBookInfo());
+        TextBookInfo textBookInfo = new TextBookInfo();
+        textBookInfo.setCreater(UserUtils.getUser().getId());
+        return dao.getAll(textBookInfo);
     }
 
     /**

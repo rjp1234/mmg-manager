@@ -20,7 +20,7 @@
 		t_studio_url,
 		t_content,
 		example_url
-		)values(
+		)select 
 		#{id},
 		#{name},
 		#{content},
@@ -33,12 +33,14 @@
 		#{tStudioUrl},
 		#{tContent},
 		#{exampleUrl}
+		from dual where not exists(
+			select name from lession_info where del_flag=#{DEL_FLAG_NORMAL} AND name=#{name} AND creater=#{creater}
 		)
 	</insert>
 	<select id="findList" resultType="LessionInfo">
 		select * from lession_info
 		<where>
-			del_flag=#{DEL_FLAG_NORMAL}
+			del_flag=#{DEL_FLAG_NORMAL} and creater=#{creater}
 			<if test="name !=null and name !=''">
 				and name like concat("%",#{name},"%")
 			</if>
