@@ -241,7 +241,7 @@ public class ClassInfoController extends BaseController {
         Map<String, Object> returnMap = new HashMap<String, Object>();
         returnMap.put("flag", false);
         returnMap.put("msg", "<span style='color:red'>该名称已存在</span>");
-        String className = request.getParameter("name");
+        String className = request.getParameter("className");
         int i = classService.countByClassName(className);
         if (i == 0) {
             returnMap.put("flag", true);

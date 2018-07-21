@@ -22,6 +22,26 @@
 		$("#searchForm").submit();
 		return false;
 	}
+	function delStudio(id) {
+		var flag = confirm("确认删除该录音文件？");
+		if (!flag) {
+			return;
+		}
+		$.ajax({
+			url : '${ctx}/operator/studio/delStudio',
+			type : 'post',
+			data : "studioId=" + id,
+			dataType : 'json',
+			success : function(data) {
+				if (data.flag) {
+					$("#del_" + id).html("已删除");
+				}
+				alertx(data.message);
+			}
+		});
+
+
+	}
 
 	function issueLession() {
 		var classId = $("#issueClassList").val();
@@ -57,8 +77,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-	<li><a href="${ctx}/operator/lessionOperation/lessionList">课文列表</a></li>
-		<li class="active"><a href="${ctx}/operator/studio/studioList?lessionId=${studioInfo.lessionId}&classId=${studioInfo.classId}">录音列表</a></li>
+		<li><a href="${ctx}/operator/lessionOperation/lessionList">课文列表</a></li>
+		<li class="active"><a
+			href="${ctx}/operator/studio/studioList?lessionId=${studioInfo.lessionId}&classId=${studioInfo.classId}">录音列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="studioInfo"
 		action="${ctx}/operator/studio/studioList" method="post"
@@ -66,7 +87,7 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 		<input id="pageSize" name="pageSize" type="hidden"
 			value="${page.pageSize}" />
-			<form:hidden path="lessionId"/>
+		<form:hidden path="lessionId" />
 		<ul class="ul-form">
 			<li><label>学生名称：</label> <form:input path='userId'
 					htmlEscape="false" maxlength="50" class="input-medium" /></li>
@@ -97,8 +118,9 @@
 				<th>组别</th>
 				<th>上传时间</th>
 				<c:if test="${searchPoint}">
-				<th>评分</th>
-				<th>评语</th></c:if>
+					<th>评分</th>
+					<th>评语</th>
+				</c:if>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -114,15 +136,12 @@
 						<td>${studio.point}</td>
 						<td>${studio.comment }</td>
 					</c:if>
-					<td>
-						<c:if test="${!searchPoint}">
-							<a href="${ctx}/operator/studio/studioPointForm?id=${studio.id}&classIdSearch=${studioInfo.classId}">批改</a>
-						</c:if>
-						<c:if test="${searchPoint}">
+					<td id="del_${studio.id}"><c:if test="${!searchPoint}">
+							<a
+								href="${ctx}/operator/studio/studioPointForm?id=${studio.id}&classIdSearch=${studioInfo.classId}">批改</a>
+						</c:if> <c:if test="${searchPoint}">
 							<a>修改</a>
-						</c:if>
-					
-					</td>
+						</c:if><a onclick="delStudio('${studio.id}')">删除</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>

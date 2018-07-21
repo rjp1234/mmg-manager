@@ -53,6 +53,7 @@
 			alertx("请选择要上传的excel");
 			return false;
 		}
+	   loading('正在提交,请稍等...'); 
 		return true;
 
 	}

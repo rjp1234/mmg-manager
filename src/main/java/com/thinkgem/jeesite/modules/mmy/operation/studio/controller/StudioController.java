@@ -232,4 +232,30 @@ public class StudioController extends BaseController {
 
     }
 
+    @RequestMapping("delStudio")
+    @ResponseBody
+    public Map<String, Object> delStudio(HttpServletRequest request, HttpServletResponse response,
+            StudioInfo studioInfo) {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        returnMap.put("flag", false);
+        returnMap.put("message", "删除失败");
+        String studioId = request.getParameter("studioId");
+        if (StringUtils.isBlank(studioId)) {
+            return returnMap;
+        }
+        try {
+            int i = studioService.delete(studioId);
+            if (i == 1) {
+                returnMap.put("flag", true);
+                returnMap.put("message", "删除成功");
+
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return returnMap;
+
+    }
+
 }

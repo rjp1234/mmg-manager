@@ -58,6 +58,7 @@
 			alertx("请选择教师录音");
 			return false;
 		}
+		loading("正在上传中");
 		return true;
 
 	}
@@ -218,14 +219,14 @@
 		<div class="control-group">
 			<label class="control-label">教师的话（文本）:</label>
 			<div class="controls">
-				<form:textarea style="width:600px" path="tContent"
+				<form:textarea style="width:600px;height:300px;" path="tContent"
 					htmlEscape="false" rows="3" class="input-xlarge" />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">课文内容:</label>
 			<div class="controls">
-				<form:textarea style="width:600px;" path="content" id="content"
+				<form:textarea style="width:600px;height:300px;" path="content" id="content"
 					htmlEscape="false" rows="3" class="input-xlarge" />
 			</div>
 		</div>

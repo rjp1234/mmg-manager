@@ -67,7 +67,6 @@
 			<if test="lessionId!=null and lessionId!=''">
 				and lession_id=#{lessionId}
 			</if>
-
 		</where>
 		limit 1;
 	</select>

@@ -137,9 +137,7 @@
 		</div>
 		<div class="control-group">
 			<div class="controls">
-				<form:input type="hidden" id="imageUrl" path="image" />
-				<sys:ckfinder input="imageUrl" type="images" uploadPath="/files"
-					selectMultiple="false" maxWidth="100" maxHeight="100" />
+				<img src="${lessionInfo.image}"></img>
 			</div>
 			<br> <br>
 		</div>
@@ -158,15 +156,13 @@
 		<div class="control-group">
 			<label class="control-label">教师的话（文本）:</label>
 			<div class="controls">
-				<form:textarea style="width:600px" path="tContent"
-					htmlEscape="false" rows="3" class="input-xlarge" readonly="true" />
+				<div>${lessionInfo.tContent}</div>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">课文内容:</label>
 			<div class="controls">
-				<form:textarea style="width:600px;" path="content"
-					id="content" htmlEscape="false" rows="3" class="input-xlarge" readonly="true"/>
+					<div>${lessionInfo.content}</div>
 			</div>
 		</div>
 	</form:form>
